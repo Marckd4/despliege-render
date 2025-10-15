@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+
+      <h6> {{ producto.categoria }}</h6>
+      <p>{{ producto.cod_dun}}</p>
+      <p>{{ producto.cod_sistema}}</p>
+      <p>{{ producto.descripcion}}</p>
+      
+      <a class="btn btn-sm btn-outline-dark" href="{% url 'productos:index' %}">Volver</a>
+      
+    </div> 
+</div>
+{% endblock%}

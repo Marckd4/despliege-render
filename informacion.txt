@@ -1,0 +1,66 @@
+pip install pipenv entorno virtual 
+pipenv install django==5.2.7
+pipenv shell --> ingresar al entorno virtual 
+exit
+
+
+django-admin startproject productly . --> crear projecto
+python manage.py runserver --> entrar a url de enlace
+python manage.py startapp productos
+
+python manage.py makemigrations   --- post actualizar datos nuevos en models
+python manage.py migrate
+
+python manage.py createsuperuser  ---crear usuario
+
+
+**** pipenv install pylint-django ***** para errores 
+
+
+pip install openpyxl ****excel****
+
+
+1° apps 
+2° settings
+3° urls 
+4° urls 
+5° views
+
+
+
+html tabla
+
+table.table>thead>tr>th*4
+<th>Categoria</th>
+                            <th>Empresa</th>
+                            <th>Ubicacion</th>
+                            <th>Cod EAN</th>
+                            <th>Cod DUN</th>
+                            <th>Cod Sistema</th>
+                            <th>Descripcion</th>
+                            <th>Unidad</th>
+                            <th>Pack</th>
+                            <th>FactorX</th>
+                            <th>Cajas</th>
+                            <th>Saldo</th>
+                            <th>Stock Fisico</th>
+                            <th>Observacion</th>
+                            <th>Fecha Venc</th>
+                            <th>Fecha Imp</th>
+                            <th>Contenedor</th>
+                            <th>Fecha Inv</th>
+                            <th>Encargado</th>
+                            <th>Acciones</th>
+
+
+pip install django-crispy-forms crispy-bootstrap5
+
+
+pip install whitenoise[brotli]
+
+'whitenoise.middleware.whiteNoiseMiddleware'
+
+
+pip install gunicorn
+
+pip freeze > requirements.txt
