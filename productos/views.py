@@ -3,10 +3,12 @@ from django.shortcuts import render
 
 from productos.forms import ProductoForm
 from .models import Producto
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 # productos/
+@login_required
 def index(request):
     productos = Producto.objects.all()
     

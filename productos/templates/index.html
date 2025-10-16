@@ -7,6 +7,16 @@
 <a href="{% url 'productos:formulario'%}" class="btn btn-dark"> Nuevo Ingreso</a>
 <a href="{% url 'productos:exportar_excel' %}" class="btn btn-dark">📊 Exportar a Excel</a>
 
+{% if user.is_authenticated %}
+  <form method="post" action="{% url 'logout' %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </button>
+  </form>
+{% endif %}
+
+
 
  <div class="mb-3">
     <label for="globalSearch" class="form-label"></label>
