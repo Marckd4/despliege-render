@@ -4,16 +4,16 @@
 
 <h1>Inventario </h1>
 <br>
-<a href="{% url 'productos:formulario'%}" class="btn btn-dark"> Nuevo Ingreso</a>
-<a href="{% url 'productos:exportar_excel' %}" class="btn btn-dark">📊 Exportar a Excel</a>
- <a href="{% url 'resumen_view' %}" class="btn btn-dark">📊 Resumen</a>
+<a href="{% url 'productos:formulario'%}" class="btn btn-dark btn-sm"> Nuevo Ingreso</a>
+<a href="{% url 'productos:exportar_excel' %}" class="btn btn-dark btn-sm">📊 Exportar a Excel</a>
+<a href="{% url 'resumen_view' %}" class="btn btn-dark btn-sm">📊 Resumen</a>
 
 
 
 {% if user.is_authenticated %}
   <form method="post" action="{% url 'logout' %}" class="d-inline">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">
+    <button type="submit" class="btn btn-danger btn-sm ">
       <i class="bi bi-box-arrow-right"></i> Cerrar sesión
     </button>
   </form>
@@ -123,6 +123,8 @@
         });
         });
         </script>
+
+        
 
 {% endblock %}
 
