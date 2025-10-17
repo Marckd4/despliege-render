@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="text-center mb-4">Resumen de Productos</h3>
+
+  <div class="d-flex justify-content-between mb-3">
+    <!-- Campo de filtro -->
+    <input type="text" id="filtroTabla" class="form-control w-50" placeholder="Filtrar por Cod_DUN o Ubicación...">
+
+    <!-- Botón de exportación -->
+    <a href="{% url 'exportar_resumen_excel' %}" class="btn btn-success">
+      📤 Exportar a Excel
+    </a>
+  </div>
+
+  <table class="table table-striped text-center" id="tablaResumen">
+    <thead class="table-dark">
+      <tr>
+        <th>Cod_DUN</th>
+        <th>Ubicación</th>
+        <th>Total Cajas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Cargando datos...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filtro = document.getElementById('filtroTabla');
+  const tbody = document.querySelector('#tablaResumen tbody');
+  let datosGlobales = [];
+
+  function actualizarResumen() {
+    fetch("{% url 'resumen_data' %}")
+      .then(response => response.json())
+      .then(data => {
+        datosGlobales = data;
+        renderizarTabla(data);
+      })
+      .catch(error => console.error('Error al actualizar resumen:', error));
+  }
+
+  function renderizarTabla(datos) {
+    tbody.innerHTML = '';
+    if (datos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3">Sin datos disponibles</td></tr>';
+      return;
+    }
+    datos.forEach(item => {
+      const fila = `
+        <tr>
+          <td>${item.cod_dun}</td>
+          <td>${item.ubicacion || '-'}</td>
+          <td>${item.total_cajas ?? 0}</td>
+        </tr>`;
+      tbody.insertAdjacentHTML('beforeend', fila);
+    });
+  }
+
+  // Filtro dinámico por Cod_DUN o Ubicación
+  filtro.addEventListener('input', function() {
+    const texto = this.value.toLowerCase();
+    const filtrados = datosGlobales.filter(item =>
+      (item.cod_dun && item.cod_dun.toLowerCase().includes(texto)) ||
+      (item.ubicacion && item.ubicacion.toLowerCase().includes(texto))
+    );
+    renderizarTabla(filtrados);
+  });
+
+  actualizarResumen();
+  setInterval(actualizarResumen, 5000); // Actualiza cada 5 segundos
+});
+</script>
+{% endblock %}

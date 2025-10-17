@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.forms',
     'productos.apps.ProductosConfig',
     'usuarios',
+    'resumen',
     
 
   

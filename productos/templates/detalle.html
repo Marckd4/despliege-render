@@ -1,17 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg" style="width: 24rem; border-radius: 20px; background: linear-gradient(135deg, #f0f4ff, #d9e4ff);">
+        <div class="card-body text-center">
+            
+            <!-- Icono de categoría -->
+            <div class="mb-3">
+                <i class="bi bi-box-seam" style="font-size: 2.5rem; color: #3b82f6;"></i>
+            </div>
 
-<div class="card" style="width: 18rem;">
-  <div class="card-body">
-
-      <h6> {{ producto.categoria }}</h6>
-      <p>{{ producto.cod_dun}}</p>
-      <p>{{ producto.cod_sistema}}</p>
-      <p>{{ producto.descripcion}}</p>
-      
-      <a class="btn btn-sm btn-outline-dark" href="{% url 'productos:index' %}">Volver</a>
-      
-    </div> 
+            <!-- Categoría -->
+            <h6 class="card-subtitle mb-2 text-primary text-uppercase">{{ producto.categoria }}</h6>
+            
+            <!-- Descripción -->
+            <h5 class="card-title mt-2">{{ producto.descripcion }}</h5>
+            
+            <!-- Código DUN y Sistema -->
+            <p class="card-text"><strong>Cod. DUN:</strong> {{ producto.cod_dun }}</p>
+            <p class="card-text"><strong>Cod. Sistema:</strong> {{ producto.cod_sistema }}</p>
+            
+            <!-- Botón volver -->
+            <a href="{% url 'productos:index' %}" class="btn btn-outline-primary btn-sm mt-3 w-100">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+            </a>
+        </div>
+    </div>
 </div>
-{% endblock%}
+{% endblock %}

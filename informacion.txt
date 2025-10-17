@@ -16,7 +16,8 @@ python manage.py createsuperuser  ---crear usuario
 
 **** pipenv install pylint-django ***** para errores 
 
-
+pip install whitenoise
+pipenv install openpyxl
 pip install openpyxl ****excel****
 
 
@@ -68,3 +69,7 @@ pip freeze > requirements.txt
 
 python manage.py createsuperuser  
 @logistica_general
+
+@Jose_Jaramillo
+@Yesenia_Gonzalez
+@Eduardo_Fernandez
