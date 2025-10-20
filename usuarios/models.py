@@ -9,3 +9,6 @@ class MovimientoUsuario(models.Model):
     accion = models.CharField(max_length=100)
     fecha = models.DateTimeField(auto_now_add=True)
     ip = models.GenericIPAddressField(null=True, blank=True)  # <- agregar esto si quieres guardar IP
+
+
+

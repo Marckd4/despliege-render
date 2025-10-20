@@ -42,6 +42,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def historial_movimientos(request):
-    movimientos = MovimientoUsuario.objects.filter(usuario=request.user).order_by('-fecha')
+    movimientos = MovimientoUsuario.objects.all().order_by('-fecha')
+
     return render(request, 'usuarios/historial.html', {'movimientos': movimientos})
 
