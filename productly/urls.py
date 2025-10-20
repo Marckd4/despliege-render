@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import historial_movimientos
 
 urlpatterns = [
     path('', views.inicio, name="inicio" ),
@@ -24,6 +25,12 @@ urlpatterns = [
     path('productos/' ,include('productos.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('resumen/', include('resumen.urls')),
+    path('usuarios/', include('usuarios.urls')),
+    #path('auditoria/historial/', views.auditoria_historial, name='auditoria_historial'),
+    path('historial/', views.historial_movimientos, name='historial_movimientos'),
+ 
+    
+    
     
 ]
 

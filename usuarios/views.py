@@ -34,3 +34,14 @@ def iniciar_sesion(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('login')
+
+
+from django.shortcuts import render
+from .models import MovimientoUsuario
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def historial_movimientos(request):
+    movimientos = MovimientoUsuario.objects.filter(usuario=request.user).order_by('-fecha')
+    return render(request, 'usuarios/historial.html', {'movimientos': movimientos})
+
