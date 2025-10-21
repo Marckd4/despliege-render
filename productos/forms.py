@@ -6,3 +6,5 @@ class ProductoForm(ModelForm):
         model = models.Producto
         fields ='__all__' #Incluye todos los campos del modelo
 
+
+

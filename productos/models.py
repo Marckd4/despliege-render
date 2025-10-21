@@ -10,7 +10,7 @@ class Categoria(models.Model):
 
 
 class Producto(models.Model):
-    categoria = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=100, blank=True, null=True)
     empresa = models.CharField(max_length=100, blank=True, null=True)
     ubicacion = models.CharField(max_length=100, blank=True, null=True)
     cod_ean = models.CharField(max_length=50, blank=True, null=True)
@@ -26,6 +26,7 @@ class Producto(models.Model):
     observacion = models.TextField(max_length=350, blank=True, null=True)
     fecha_inv = models.DateField(blank=True, null=True)
     encargado = models.CharField(max_length=100, blank=True, null=True)
+    fecha_venc = models.DateField(blank=True, null=True)
     fecha_imp = models.DateField(blank=True, null=True)
     numero_contenedor = models.CharField(max_length=100, blank=True, null=True)
     Data_base = models.ForeignKey(Categoria, on_delete=models.CASCADE)
