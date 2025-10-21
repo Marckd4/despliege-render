@@ -131,3 +131,7 @@ def eliminar_producto(request, id):
         producto.delete()
         return redirect('productos:index')  # Usa el nombre correcto
     return render(request, 'eliminar.html', {'producto': producto})
+
+
+
+
