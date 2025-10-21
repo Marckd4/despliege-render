@@ -35,14 +35,55 @@ def cerrar_sesion(request):
     logout(request)
     return redirect('login')
 
-
+#03
 from django.shortcuts import render
-from .models import MovimientoUsuario
 from django.contrib.auth.decorators import login_required
+from .models import MovimientoUsuario
 
 @login_required
 def historial_movimientos(request):
-    movimientos = MovimientoUsuario.objects.all().order_by('-fecha')
-
+    movimientos = MovimientoUsuario.objects.select_related('usuario').order_by('-fecha')
     return render(request, 'usuarios/historial.html', {'movimientos': movimientos})
 
+
+
+
+# 04
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from .models import MovimientoUsuario
+
+@login_required
+def historial_movimientos(request):
+    movimientos = MovimientoUsuario.objects.select_related('usuario').order_by('-fecha')
+
+    # Filtros opcionales
+    usuario_id = request.GET.get('usuario')
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    # Solo filtrar si usuario_id es un número válido
+    if usuario_id and usuario_id.isdigit():
+        movimientos = movimientos.filter(usuario_id=int(usuario_id))
+
+    if fecha_inicio:
+        movimientos = movimientos.filter(fecha__gte=fecha_inicio)
+    if fecha_fin:
+        movimientos = movimientos.filter(fecha__lte=fecha_fin)
+
+    # Paginación
+    paginator = Paginator(movimientos, 1000)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    usuarios = User.objects.all()
+
+    return render(request, 'usuarios/historial.html', {
+        'page_obj': page_obj,
+        'usuarios': usuarios,
+        'usuario_id': usuario_id,
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+    })

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="mt-3">Historial de Movimientos</h2>
+
+<form method="get" class="mb-3">
+    <div class="row g-2">
+        <div class="col-auto">
+            <select name="usuario" class="form-select">
+                <option value="">Todos los usuarios</option>
+                {% for user in usuarios %}
+                    <option value="{{ user.id }}" {% if user.id|stringformat:"s" == usuario_id %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" class="form-control" placeholder="Fecha inicio">
+        </div>
+        <div class="col-auto">
+            <input type="date" name="fecha_fin" value="{{ fecha_fin }}" class="form-control" placeholder="Fecha fin">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Fecha</th>
+            <th>IP</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mov in page_obj %}
+            <tr>
+                <td>{{ mov.usuario.username }}</td>
+                <td>{{ mov.accion }}</td>
+                <td>{{ mov.fecha|date:"d/m/Y H:i:s" }}</td>
+                <td>{{ mov.ip|default:"-" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No hay registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<nav>
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&usuario={{ usuario_id }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Anterior</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% else %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ num }}&usuario={{ usuario_id }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">{{ num }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}&usuario={{ usuario_id }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Siguiente</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}

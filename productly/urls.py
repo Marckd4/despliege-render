@@ -25,9 +25,9 @@ urlpatterns = [
     path('productos/' ,include('productos.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('resumen/', include('resumen.urls')),
-    path('usuarios/', include('usuarios.urls')),
+    path('', include('usuarios.urls')),
     #path('auditoria/historial/', views.auditoria_historial, name='auditoria_historial'),
-    path('historial/', views.historial_movimientos, name='historial_movimientos'),
+    #path('historial/', views.historial_movimientos, name='historial_movimientos'),
     
  
     
