@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="container mt-5">
+    
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg border-0 rounded-4">
@@ -9,32 +10,208 @@
                     <h4 class="mb-0">Formulario de Producto</h4>
                 </div>
                 <div class="card-body p-4">
+
+                    {% if mensaje %}
+                    <div class="alert alert-success text-center">
+                        {{ mensaje }}
+                    </div>
+                    {% endif %}
+
                     <form novalidate action="{% url 'productos:formulario' %}" method="post">
                         {% csrf_token %}
 
+                        <!-- CAMPOS AUTOCOMPLETADOS -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Código DUN</label>
+                            <input type="text" id="id_cod_dun" name="cod_dun" class="form-control" placeholder="Ingrese DUN">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Código EAN</label>
+                            <input type="text" id="id_cod_ean_display" class="form-control bg-light" readonly>
+                            <input type="hidden" id="id_cod_ean" name="cod_ean">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Código Sistema</label>
+                            <input type="text" id="id_cod_sistema_display" class="form-control bg-light" readonly>
+                            <input type="hidden" id="id_cod_sistema" name="cod_sistema">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Descripción</label>
+                            <input type="text" id="id_descripcion_display" class="form-control bg-light" readonly>
+                            <input type="hidden" id="id_descripcion" name="descripcion">
+                        </div>
+
+                        <!-- CAMPOS DEL FORM DJANGO -->
                         {% for field in form %}
+                        {% if field.name not in 'cod_dun cod_ean cod_sistema descripcion' %}
                         <div class="mb-3">
                             <label class="form-label fw-semibold">{{ field.label }}</label>
                             {{ field }}
                             {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
+                            <div class="invalid-feedback d-block">
+                                {% for error in field.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
                             {% endif %}
                         </div>
+                        {% endif %}
                         {% endfor %}
 
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill">
-                                Enviar
-                            </button>
-                        </div>
+                       <div class="text-center mt-4">
+                    <a href="{% url 'productos:index'%}" 
+                    class="btn btn-secondary px-4 py-2 rounded-pill me-2">
+                        ← Volver al Inventario
+                    </a>
+                    <button type="submit" 
+                            class="btn btn-primary px-5 py-2 rounded-pill">
+                        💾 Guardar
+                    </button>
+                </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ===========================================
+     SCRIPT DE AUTOCOMPLETADO Y CÁLCULO STOCK
+=========================================== -->
+<!-- ===========================================
+     SCRIPT DE AUTOCOMPLETADO Y CÁLCULO STOCK
+=========================================== -->
+<script>
+    // ====== Multiplicación automática unidad * pack ======
+    const cajas = document.getElementById('id_cajas');
+    const factorx = document.getElementById('id_factorx');
+    const stockFisico = document.getElementById('id_stock_fisico');
+
+    const actualizarStock = () => {
+        const c = parseFloat(cajas?.value) || 0;
+        const f = parseFloat(factorx?.value) || 0;
+        if (stockFisico) stockFisico.value = (c * f).toFixed(2);
+    };
+
+    if (cajas && factorx && stockFisico) {
+        cajas.addEventListener('input', actualizarStock);
+        factorx.addEventListener('input', actualizarStock);
+    }
+
+    // ====== Autocompletado por código DUN ======
+    const codDunInput = document.getElementById('id_cod_dun');
+    let buscandoProducto = false; // flag para evitar múltiples consultas
+
+    codDunInput.addEventListener('change', () => {
+        if (buscandoProducto) return;
+        buscandoProducto = true;
+
+        const codDun = codDunInput.value.trim();
+        if (!codDun) {
+            buscandoProducto = false;
+            return;
+        }
+
+        fetch("{% url 'productos:buscar_producto' %}?cod_dun=" + codDun)
+            .then(response => response.json())
+            .then(data => {
+                const resultados = data.resultados || [];
+
+                if (resultados.length === 0) {
+                    limpiarCampos();
+                    alert('⚠️ No se encontró ningún producto con ese código DUN.');
+                } else if (resultados.length === 1) {
+                    asignarCampos(resultados[0]);
+                } else {
+                    // Mostrar solo hasta 3 opciones
+                    let opciones = "Se encontraron varios productos con este DUN:\n\n";
+                    resultados.slice(0, 3).forEach((r, i) => {
+                        opciones += `${i + 1}. ${r.descripcion} (Sistema: ${r.cod_sistema})\n`;
+                    });
+
+                    opciones += "\nIngrese el número de la opción que desea usar:";
+                    const seleccion = prompt(opciones);
+                    const indice = parseInt(seleccion) - 1;
+
+                    if (!isNaN(indice) && indice >= 0 && indice < Math.min(3, resultados.length)) {
+                        asignarCampos(resultados[indice]);
+                    } else {
+                        alert('⚠️ Selección no válida.');
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => buscandoProducto = false);
+    });
+
+    // ====== Lista de campos que usan escáner ======
+    const camposScanner = ['id_cod_dun', 'id_cod_ean', 'id_ubicacion'];
+
+    camposScanner.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Solo disparar change si no hay otra consulta en curso
+                    if (!buscandoProducto) campo.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    });
+
+    const limpiarCampos = () => {
+        const campos = ['cod_ean', 'cod_sistema', 'descripcion'];
+        campos.forEach(c => {
+            const input = document.getElementById(`id_${c}`);
+            const display = document.getElementById(`id_${c}_display`);
+            if (input) input.value = '';
+            if (display) display.value = '';
+        });
+    };
+
+    const asignarCampos = (r) => {
+        document.getElementById('id_cod_ean').value = r.cod_ean;
+        document.getElementById('id_cod_ean_display').value = r.cod_ean;
+
+        document.getElementById('id_cod_sistema').value = r.cod_sistema;
+        document.getElementById('id_cod_sistema_display').value = r.cod_sistema;
+
+        document.getElementById('id_descripcion').value = r.descripcion;
+        document.getElementById('id_descripcion_display').value = r.descripcion;
+    };
+</script>
+
+
+
 {% endblock %}
+
+
+ 
+
+    // Evitar submit automático al presionar Enter en cod_dun
+    codDunInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            codDunInput.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Lista de campos que usan escáner
+    const camposScanner = ['id_cod_dun', 'id_cod_ean', 'id_ubicacion'];
+
+    camposScanner.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    campo.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    });

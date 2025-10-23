@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'productos.apps.ProductosConfig',
     'usuarios',
     'resumen',
+    'widget_tweaks',
     
 
   

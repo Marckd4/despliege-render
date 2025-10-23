@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 
@@ -24,12 +25,12 @@ class Producto(models.Model):
     saldo = models.IntegerField(blank=True, null=True)
     stock_fisico = models.IntegerField(blank=True, null=True)
     observacion = models.TextField(max_length=350, blank=True, null=True)
-    fecha_inv = models.DateField(blank=True, null=True)
+    fecha_inv = models.DateField(default=datetime.date.today, blank=True, null=True)
     encargado = models.CharField(max_length=100, blank=True, null=True)
     fecha_venc = models.DateField(blank=True, null=True)
-    fecha_imp = models.DateField(blank=True, null=True)
+    fecha_imp = models.DateField(default=datetime.date.today, blank=True, null=True)
     numero_contenedor = models.CharField(max_length=100, blank=True, null=True)
-    Data_base = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    Data_base = models.ForeignKey(Categoria, on_delete=models.CASCADE,blank=True, null=True)
     
     
     def __str__(self):

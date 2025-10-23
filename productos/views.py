@@ -136,6 +136,90 @@ def eliminar_producto(request, id):
 
 
 # cod_dun
+ 
 
+
+from django.shortcuts import render
+from .models import Producto
+from .forms import ProductoForm
+import datetime
+
+def formulario_producto(request):
+    mensaje = ''
+    form_data = None
+
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+
+            # Campos manuales enviados desde el template
+            cod_dun = request.POST.get('cod_dun', '')
+            cod_ean = request.POST.get('cod_ean', '')
+            cod_sistema = request.POST.get('cod_sistema', '')
+            descripcion = request.POST.get('descripcion', '')
+
+            defaults = {
+                'cod_ean': cod_ean,
+                'cod_sistema': cod_sistema,
+                'descripcion': descripcion,
+                'unidad': cd.get('unidad') or '',
+                'pack': cd.get('pack') or 0,
+                'factorx': cd.get('factorx') or 0.0,
+                'cajas': cd.get('cajas') or 0,
+                'saldo': cd.get('saldo') or 0,
+                'stock_fisico': cd.get('stock_fisico') or 0,
+                'observacion': cd.get('observacion') or '',
+                'fecha_inv': cd.get('fecha_inv') or datetime.date.today(),
+                'encargado': cd.get('encargado') or '',
+                'fecha_venc': cd.get('fecha_venc') or None,
+                'fecha_imp': cd.get('fecha_imp') or datetime.date.today(),
+                'numero_contenedor': cd.get('numero_contenedor') or '',
+                'Data_base': cd.get('Data_base') or '',
+            }
+
+            producto, creado = Producto.objects.update_or_create(
+                cod_dun=cod_dun,
+                defaults=defaults
+            )
+
+            mensaje = f"✅ Producto {producto.cod_dun} creado correctamente." if creado else f"ℹ️ Producto {producto.cod_dun} actualizado correctamente."
+
+            # Mostrar los datos ingresados en el formulario
+            form = ProductoForm(instance=producto)
+            form_data = producto  # para los inputs manuales
+        else:
+            print("Errores del formulario:", form.errors)
+    else:
+        form = ProductoForm()
+
+    return render(request, 'productos/formulario.html', {
+        'form': form,
+        'mensaje': mensaje,
+        'form_data': form_data  # datos para inputs manuales
+    })
+
+
+
+
+# buscar  productos
+from django.http import JsonResponse
+from .models import Producto
+
+def buscar_producto(request):
+    cod_dun = request.GET.get('cod_dun')
+    productos = Producto.objects.filter(cod_dun=cod_dun)
+
+    if productos.exists():
+        data = []
+        for p in productos:
+            data.append({
+                'cod_ean': p.cod_ean,
+                'cod_sistema': p.cod_sistema,
+                'descripcion': p.descripcion,
+            })
+        return JsonResponse({'resultados': data})
+    else:
+        return JsonResponse({'resultados': []})
 
 

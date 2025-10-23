@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:producto_id>', views.detalle, name='detalle'),
     path('formulario', views.formulario, name='formulario'),
     path('exportar_excel/', views.exportar_excel, name='exportar_excel'),
+    path('buscar-producto/', views.buscar_producto, name='buscar_producto'),
     
    
     
