@@ -1,49 +1,43 @@
-
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db.models import Sum
 from productos.models import Producto
+import openpyxl
+from openpyxl.utils import get_column_letter
 
+# Datos para la tabla dinámica
 def resumen_cod_dun(request):
     resumen = (
         Producto.objects
-        .values('cod_dun', 'ubicacion')
+        .values('cod_dun', 'ubicacion', 'cod_sistema')  # <- agregado cod_sistema
         .annotate(total_cajas=Sum('cajas'))
         .order_by('cod_dun', 'ubicacion')
     )
     return JsonResponse(list(resumen), safe=False)
 
+# Vista del template
 def resumen_view(request):
     return render(request, 'resumen/resumen.html')
 
-
-
-from django.http import HttpResponse
-import openpyxl
-from openpyxl.utils import get_column_letter
-from django.db.models import Sum
-from productos.models import Producto
-
+# Exportación a Excel
 def exportar_resumen_excel(request):
-    # Genera los datos agrupados
     resumen = (
         Producto.objects
-        .values('cod_dun', 'ubicacion')
+        .values('cod_dun', 'ubicacion', 'cod_sistema')  # <- agregado cod_sistema
         .annotate(total_cajas=Sum('cajas'))
         .order_by('cod_dun', 'ubicacion')
     )
 
-    # Crear un archivo Excel en memoria
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Resumen Cod_DUN"
 
     # Encabezados
-    ws.append(["Cod_DUN", "Ubicación", "Total Cajas"])
+    ws.append(["Cod_DUN", "Ubicación", "Cod_Sistema", "Total Cajas"])
 
     # Datos
     for item in resumen:
-        ws.append([item['cod_dun'], item['ubicacion'], item['total_cajas']])
+        ws.append([item['cod_dun'], item['ubicacion'], item['cod_sistema'], item['total_cajas']])
     
     # Ajustar ancho de columnas
     for col in ws.columns:
@@ -57,9 +51,9 @@ def exportar_resumen_excel(request):
                 pass
         ws.column_dimensions[column].width = max_length + 2
 
-    # Respuesta HTTP con archivo Excel
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     response["Content-Disposition"] = 'attachment; filename="Resumen_CodDUN.xlsx"'
     wb.save(response)
     return response
-

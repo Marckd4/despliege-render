@@ -5,17 +5,16 @@
 
   <div class="d-flex justify-content-between mb-3">
     <!-- Campo de filtro -->
-    <input type="text" id="filtroTabla" class="form-control w-50" placeholder="Filtrar por Cod_DUN o Ubicación...">
+    <input type="text" id="filtroTabla" class="form-control w-50" placeholder="Filtrar por Cod_DUN, Ubicación o Cod_Sistema...">
 
     <!-- Botón de exportación -->
     <a href="{% url 'exportar_resumen_excel' %}" class="btn btn-success">
       📤 Exportar a Excel
     </a>
     <a href="{% url 'productos:index'%}" 
-                    class="btn btn-secondary px-4 py-2 rounded-pill me-2">
-                        ← Volver al Inventario
-                    </a>
-
+       class="btn btn-secondary px-4 py-2 rounded-pill me-2">
+       ← Volver al Inventario
+    </a>
   </div>
 
   <table class="table table-striped text-center" id="tablaResumen">
@@ -23,11 +22,12 @@
       <tr>
         <th>Cod_DUN</th>
         <th>Ubicación</th>
+        <th>Cod_Sistema</th>
         <th>Total Cajas</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="3">Cargando datos...</td></tr>
+      <tr><td colspan="4">Cargando datos...</td></tr>
     </tbody>
   </table>
 </div>
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderizarTabla(datos) {
     tbody.innerHTML = '';
     if (datos.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3">Sin datos disponibles</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4">Sin datos disponibles</td></tr>';
       return;
     }
     datos.forEach(item => {
@@ -59,18 +59,20 @@ document.addEventListener('DOMContentLoaded', function() {
         <tr>
           <td>${item.cod_dun}</td>
           <td>${item.ubicacion || '-'}</td>
+          <td>${item.cod_sistema || '-'}</td>
           <td>${item.total_cajas ?? 0}</td>
         </tr>`;
       tbody.insertAdjacentHTML('beforeend', fila);
     });
   }
 
-  // Filtro dinámico por Cod_DUN o Ubicación
+  // Filtro dinámico por Cod_DUN, Ubicación o Cod_Sistema
   filtro.addEventListener('input', function() {
     const texto = this.value.toLowerCase();
     const filtrados = datosGlobales.filter(item =>
       (item.cod_dun && item.cod_dun.toLowerCase().includes(texto)) ||
-      (item.ubicacion && item.ubicacion.toLowerCase().includes(texto))
+      (item.ubicacion && item.ubicacion.toLowerCase().includes(texto)) ||
+      (item.cod_sistema && item.cod_sistema.toLowerCase().includes(texto))
     );
     renderizarTabla(filtrados);
   });
