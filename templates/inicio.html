@@ -1,16 +1,52 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block content %}
+<div class="container py-5 text-center">
 
-{% block content%}
+    <h2 class="mb-4 fw-bold text-primary">
+        <i class="bi bi-truck me-2"></i> Bienvenido a Logística ChileanTrading
+    </h2>
+    <p class="text-muted mb-5">Versión 1.0</p>
 
-<div>
-    
-    Bienvenido Logistica_ChileanTrading
-    <br>
-    Version 1.0
+    <h3 class="mb-4">
+        <i class="bi bi-people-fill me-2"></i>Usuarios en línea
+    </h3>
 
+    {% if usuarios %}
+        <div class="row g-4 justify-content-center">
+            {% for u in usuarios %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 rounded-4 h-100 hover-shadow transition">
+                    <div class="card-body text-center">
+                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3"
+                             style="width:70px; height:70px; font-size:1.5rem;">
+                            {{ u.username|slice:":2"|upper }}
+                        </div>
+                        <h5 class="card-title mb-1">{{ u.username }}</h5>
+                        <p class="text-muted small mb-2">
+                            Último acceso: 
+                            {{ u.last_login|date:"d M Y H:i" }}
+                        </p>
+                        <span class="badge bg-success px-3 py-1">En línea</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center mt-5">
+            <i class="bi bi-emoji-frown display-3 text-muted"></i>
+            <p class="mt-3 fs-5 text-muted">No hay usuarios en línea.</p>
+        </div>
+    {% endif %}
 </div>
 
-
-
-{% endblock content%}
+<style>
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  transition: all 0.2s ease-in-out;
+}
+</style>
+{% endblock %}

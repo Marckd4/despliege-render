@@ -87,3 +87,17 @@ def historial_movimientos(request):
         'fecha_inicio': fecha_inicio,
         'fecha_fin': fecha_fin,
     })
+
+
+
+
+from django.shortcuts import render
+from django.utils import timezone
+import datetime
+from django.contrib.auth.models import User
+
+def usuarios_en_linea(request):
+    ahora = timezone.now()
+    hace_5_min = ahora - datetime.timedelta(minutes=5)
+    en_linea = User.objects.filter(last_login__gte=hace_5_min)
+    return render(request, 'usuarios/en_linea.html', {'usuarios': en_linea})

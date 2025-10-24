@@ -223,3 +223,5 @@ def buscar_producto(request):
         return JsonResponse({'resultados': []})
 
 
+# registro de usuarios 
+
