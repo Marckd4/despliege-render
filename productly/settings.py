@@ -123,18 +123,31 @@ WSGI_APPLICATION = 'productly.wsgi.application'
 #     "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
 # }
 
+# import dj_database_url
+# import os
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get(
+#             'DATABASE_URL',  # Render la define automáticamente
+#             'postgresql://postgres:postgres@localhost:5432/mysite'  # fallback local
+#         ),
+#         conn_max_age=600
+#     )
+# }
+
+
 import dj_database_url
 import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get(
-            'DATABASE_URL',  # Render la define automáticamente
-            'postgresql://postgres:postgres@localhost:5432/mysite'  # fallback local
-        ),
-        conn_max_age=600
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
+
 
 
 
