@@ -225,3 +225,4 @@ def buscar_producto(request):
 
 # registro de usuarios 
 
+

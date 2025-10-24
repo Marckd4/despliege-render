@@ -13,6 +13,7 @@ urlpatterns = [
     path('exportar_excel/', views.exportar_excel, name='exportar_excel'),
     path('buscar-producto/', views.buscar_producto, name='buscar_producto'),
     
+    
    
     
 ]

@@ -101,3 +101,20 @@ def usuarios_en_linea(request):
     hace_5_min = ahora - datetime.timedelta(minutes=5)
     en_linea = User.objects.filter(last_login__gte=hace_5_min)
     return render(request, 'usuarios/en_linea.html', {'usuarios': en_linea})
+
+
+
+
+
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
+def registrar_usuario(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # o a la página que quieras
+    else:
+        form = UserCreationForm()
+    return render(request, 'usuarios/registro.html', {'form': form})

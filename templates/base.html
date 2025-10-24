@@ -63,6 +63,12 @@
           </a>
         {% else %}
           <a href="{% url 'login' %}" class="btn btn-success">Iniciar sesión</a>
+          <!-- <a href="{% url 'admin:index' %}" class="btn btn-sm btn-primary">Ir a Admin</a> -->
+           <!-- <a href="{% url 'admin:auth_user_add' %}" class="btn btn-success">usuario</a> -->
+            <a href="{% url 'registrar_usuario' %}" class="btn btn-outline-success">
+            ➕ Crear usuario
+          </a>
+
         {% endif %}
       </div>
     </div>

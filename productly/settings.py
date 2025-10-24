@@ -104,8 +104,8 @@ WSGI_APPLICATION = 'productly.wsgi.application'
 # DATABASES = {
 #     'default': { 
         
-#         # 'ENGINE': 'django.db.backends.sqlite3',
-#         # 'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
 
@@ -115,6 +115,9 @@ DATABASES = {
         conn_max_age=600
     )
 }
+
+
+
 
 # import dj_database_url
 # import os
