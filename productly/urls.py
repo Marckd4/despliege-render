@@ -29,6 +29,7 @@ urlpatterns = [
     
     
     
+    
     #path('auditoria/historial/', views.auditoria_historial, name='auditoria_historial'),
     #path('historial/', views.historial_movimientos, name='historial_movimientos'),
     

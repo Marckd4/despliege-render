@@ -236,14 +236,21 @@ User = get_user_model()
 
 def dashboard(request):
     now = timezone.now()
-    online_threshold = now - timedelta(minutes=5)  # 5 minutos como ejemplo
+    online_threshold = now - timedelta(minutes=5)
+    usuarios = User.objects.all().order_by('-last_login')
 
-    usuarios_online = User.objects.filter(last_login__gte=online_threshold).order_by('-last_login')
-    usuarios_offline = User.objects.exclude(pk__in=usuarios_online.values_list('pk', flat=True)).order_by('-last_login')
+    # Añadimos propiedad dinámica "en_linea"
+    for u in usuarios:
+        u.en_linea = u.last_login and u.last_login >= online_threshold
+
+    # Contadores
+    total_usuarios = usuarios.count()
+    usuarios_en_linea = sum(1 for u in usuarios if u.en_linea)
 
     context = {
-        'usuarios_online': usuarios_online,
-        'usuarios_offline': usuarios_offline,
+        'usuarios': usuarios,
         'online_threshold_minutes': 5,
+        'total_usuarios': total_usuarios,
+        'usuarios_en_linea': usuarios_en_linea,
     }
     return render(request, 'dashboard.html', context)
