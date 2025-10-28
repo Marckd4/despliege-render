@@ -3,50 +3,103 @@
 
 {% block content %}
 <div class="container py-5 text-center">
-
     <h2 class="mb-4 fw-bold text-primary">
-        <i class="bi bi-truck me-2"></i> Bienvenido a Logística ChileanTrading
+        <i class="bi bi-truck me-2" aria-label="Camión"></i> Bienvenido a Logística ChileanTrading
     </h2>
     <p class="text-muted mb-5">Versión 1.0</p>
 
-    <h3 class="mb-4">
-        <i class="bi bi-people-fill me-2"></i>Usuarios en línea
-    </h3>
+    <div class="row g-4 justify-content-center mb-4">
+        <h3 class="col-12 mb-3">
+            <i class="bi bi-people-fill me-2" aria-label="Usuarios"></i>Usuarios en línea (últimos {{ online_threshold_minutes }} minutos)
+        </h3>
 
-    {% if usuarios %}
-        <div class="row g-4 justify-content-center">
-            {% for u in usuarios %}
+        {% if usuarios_online %}
+            {% for u in usuarios_online %}
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card shadow-sm border-0 rounded-4 h-100 hover-shadow transition">
                     <div class="card-body text-center">
-                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3"
-                             style="width:70px; height:70px; font-size:1.5rem;">
-                            {{ u.username|slice:":2"|upper }}
+                        <div class="position-relative d-inline-block mb-3">
+                            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
+                                 style="width:70px; height:70px; font-size:1.4rem;">
+                                {{ u.username|slice:":2"|upper }}
+                            </div>
+                            <span class="status-dot bg-success"></span>
                         </div>
+
                         <h5 class="card-title mb-1">{{ u.username }}</h5>
-                        <p class="text-muted small mb-2">
-                            Último acceso: 
-                            {{ u.last_login|date:"d M Y H:i" }}
-                        </p>
+                        <p class="text-muted small mb-2">Último acceso: {{ u.last_login|date:"d M Y H:i" }}</p>
                         <span class="badge bg-success px-3 py-1">En línea</span>
                     </div>
                 </div>
             </div>
             {% endfor %}
-        </div>
-    {% else %}
-        <div class="text-center mt-5">
-            <i class="bi bi-emoji-frown display-3 text-muted"></i>
-            <p class="mt-3 fs-5 text-muted">No hay usuarios en línea.</p>
-        </div>
-    {% endif %}
+        {% else %}
+            <div class="text-center mt-3 col-12">
+                <p class="mt-3 fs-6 text-muted">No hay usuarios en línea.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <div class="row g-4 justify-content-center mt-4">
+        <h4 class="col-12 mb-3">Usuarios fuera de línea</h4>
+
+        {% if usuarios_offline %}
+            {% for u in usuarios_offline %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body text-center">
+                        <div class="position-relative d-inline-block mb-3">
+                            <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center"
+                                 style="width:70px; height:70px; font-size:1.4rem;">
+                                {{ u.username|slice:":2"|upper }}
+                            </div>
+                            <span class="status-dot bg-secondary"></span>
+                        </div>
+
+                        <h5 class="card-title mb-1">{{ u.username }}</h5>
+                        <p class="text-muted small mb-2">Último acceso: {{ u.last_login|date:"d M Y H:i" }}</p>
+                        <span class="badge bg-secondary px-3 py-1">Fuera de línea</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center mt-3 col-12">
+                <p class="mt-3 fs-6 text-muted">No hay usuarios registrados.</p>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
 <style>
-.hover-shadow:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-  transition: all 0.2s ease-in-out;
+.hover-shadow {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.hover-shadow:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 1rem 2rem rgba(0,0,0,0.16);
+}
+
+/* status-dot: pequeño punto en la esquina del avatar */
+.position-relative { position: relative; display: inline-block; }
+.status-dot {
+  position: absolute;
+  bottom: 0;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+}
+
+/* bg-success ya define color; bg-secondary para offline */
+.bg-success.status-dot { background-color: #198754 !important; }
+.bg-secondary.status-dot { background-color: #6c757d !important; }
+
+/* Ajuste responsivo para tarjetas */
+.card { min-height: 190px; }
 </style>
 {% endblock %}

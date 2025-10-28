@@ -226,3 +226,24 @@ def buscar_producto(request):
 # registro de usuarios 
 
 
+# views.py
+from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
+
+User = get_user_model()
+
+def dashboard(request):
+    now = timezone.now()
+    online_threshold = now - timedelta(minutes=5)  # 5 minutos como ejemplo
+
+    usuarios_online = User.objects.filter(last_login__gte=online_threshold).order_by('-last_login')
+    usuarios_offline = User.objects.exclude(pk__in=usuarios_online.values_list('pk', flat=True)).order_by('-last_login')
+
+    context = {
+        'usuarios_online': usuarios_online,
+        'usuarios_offline': usuarios_offline,
+        'online_threshold_minutes': 5,
+    }
+    return render(request, 'dashboard.html', context)

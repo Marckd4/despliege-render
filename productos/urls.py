@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import dashboard
 
 # /productos/.....
 
@@ -12,6 +13,7 @@ urlpatterns = [
     path('formulario', views.formulario, name='formulario'),
     path('exportar_excel/', views.exportar_excel, name='exportar_excel'),
     path('buscar-producto/', views.buscar_producto, name='buscar_producto'),
+    path('', dashboard, name='dashboard'),
     
     
    
