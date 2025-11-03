@@ -1,119 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>Logistica</title>
-    <!-- Bootstrap 5.3.3 CSS -->
-    <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logística</title>
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-    
-        <style>
+    /* Sidebar estilo neon */
+    .sidebar {
+      width: 250px;
+      background-color: #111;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      padding-top: 20px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      overflow-y: auto;
+    }
+
+    .sidebar h4 {
+      color: #0ff;
+      text-align: center;
+      font-weight: bold;
+      text-shadow: 0 0 15px #0ff, 0 0 25px #0ff;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #aaa;
+      text-decoration: none;
+      padding: 12px 20px;
+      margin: 8px 10px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 15px #0ff, 0 0 25px #0ff, 0 0 40px #0ff;
+      transform: scale(1.05);
+    }
+
+    .sidebar a i {
+      margin-right: 10px;
+    }
+
+    .sidebar .user-info {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0ff;
+      font-size: 0.9rem;
+      text-shadow: 0 0 10px #0ff;
+    }
+
+    /* Contenido principal */
+    .main-content {
+      margin-left: 260px;
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    /* Tabla scroll */
     .table-scroll {
-      max-height: 480px;        /* altura máxima del contenedor */
+      max-height: 480px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       border: 1px solid #e9ecef;
       border-radius: .5rem;
     }
-    /* Cabecera sticky */
+
     .table-scroll thead th {
       position: sticky;
       top: 0;
       z-index: 2;
-      background: #212529;     /* coincide con .table-dark */
+      background: #212529;
       color: #fff;
     }
+
     .table-scroll tbody tr td {
       vertical-align: middle;
     }
-    </style>
 
-
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0ff;
+      border-radius: 4px;
+      box-shadow: 0 0 10px #0ff;
+    }
+  </style>
 </head>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">ChileanTrading</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-        
-        
-        {% if user.is_authenticated %}
-          <span class="btn btn-outline-info btn-sm me-2">Bienvenido, {{ user.username }}</span>
-            <a href="{% url 'registrar_usuario' %}" class="btn btn-outline-info btn-sm me-2">
-            ➕ Crear usuario
-          </a>
-          <a class="btn btn-outline-info btn-sm me-2" aria-current="page" href="{% url 'inicio' %}">Inicio</a>
-          <a class="btn btn-outline-info btn-sm me-2" href="{% url 'productos:index'%}">Inventario_General</a>
-          <a href="{% url 'historial_movimientos' %}" class="btn btn-outline-info btn-sm me-2">
-            <i class="bi bi-activity"></i> Auditoría
-          </a>
-          <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm me-2">
-            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-          </a>
-        {% else %}
-          <a href="{% url 'login' %}" class="btn btn-success">Iniciar sesión</a>
-          <!-- <a href="{% url 'admin:index' %}" class="btn btn-sm btn-primary">Ir a Admin</a> -->
-           <!-- <a href="{% url 'admin:auth_user_add' %}" class="btn btn-success">usuario</a> -->
-          
-        {% endif %}
-      </div>
-    </div>
-  </nav>
-
-
 <body>
-        <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                    
-                    </li>
-                    <li class="nav-item">
-                    
-                    </li>
-                  
-                </ul>
-                </div>
-            </div>
-        </nav> -->
+
+  <!-- Sidebar Neon -->
+  <div class="sidebar">
+    <h4>ChileanTrading</h4>
+
+    {% if user.is_authenticated %}
+      <div class="user-info">
+        Bienvenido, {{ user.username }}
+      </div>
+      <a href="{% url 'inicio' %}"><i class="bi bi-house-door"></i> Inicio</a>
+      <a href="{% url 'productos:index' %}"><i class="bi bi-box-seam"></i> Inventario General</a>
+      <a href="{% url 'historial_movimientos' %}"><i class="bi bi-activity"></i> Auditoría</a>
+      <a href="{% url 'registrar_usuario' %}"><i class="bi bi-person-plus"></i> Crear Usuario</a>
+      <a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="text-success"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
+    {% endif %}
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="main-content">
     <div class="container">
-
-        {% block content %}
-        
-        {% endblock %}
-        
+      {% block content %}
+      {% endblock %}
     </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-            <!-- Bootstrap Bundle con Popper -->
-    <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous">
-    </script>
+  </div>
 
-    
-    
-
-    
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

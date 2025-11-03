@@ -3,6 +3,9 @@ pipenv install django==5.2.7
 pipenv shell --> ingresar al entorno virtual 
 exit
 
+pip install -r requirements.txt
+
+
 
 django-admin startproject productly . --> crear projecto
 python manage.py runserver --> entrar a url de enlace
