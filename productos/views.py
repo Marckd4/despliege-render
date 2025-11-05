@@ -254,3 +254,96 @@ def dashboard(request):
         'usuarios_en_linea': usuarios_en_linea,
     }
     return render(request, 'dashboard.html', context)
+
+
+
+#importar
+import pandas as pd
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import Producto, Categoria
+
+def importar_excel(request):
+    if request.method == "POST" and request.FILES.get("excel_file"):
+        excel_file = request.FILES["excel_file"]
+        try:
+            # Leer el archivo Excel
+            df = pd.read_excel(excel_file)
+
+            # Normalizar nombres de columnas
+            df.columns = df.columns.str.strip().str.lower()
+
+            # Reemplazar NaN por vacío
+            df = df.fillna("")
+
+            # Función auxiliar para manejar valores vacíos
+            def safe_value(value, default=None):
+                if pd.isna(value) or value == "":
+                    return default
+                return value
+
+            print("Columnas leídas:", df.columns.tolist())
+            print("Primeras filas:")
+            print(df.head())
+
+            if df.empty:
+                messages.error(request, "El archivo Excel está vacío.")
+                return redirect("productos:index")
+
+            # (Opcional) eliminar los datos previos antes de importar
+            # Producto.objects.all().delete()
+
+            for _, row in df.iterrows():
+                # Buscar o crear la categoría
+                categoria_obj = None
+                if "categoria" in df.columns and safe_value(row.get("categoria")):
+                    categoria_obj, _ = Categoria.objects.get_or_create(
+                        categoria=row["categoria"]
+                    )
+
+                # Crear el producto
+                Producto.objects.create(
+                    categoria=categoria_obj,
+                    empresa=safe_value(row.get("empresa"), ""),
+                    ubicacion=safe_value(row.get("ubicacion"), ""),
+                    cod_ean=safe_value(row.get("cod_ean"), ""),
+                    cod_dun=safe_value(row.get("cod_dun"), ""),
+                    cod_sistema=safe_value(row.get("cod_sistema"), ""),
+                    descripcion=safe_value(row.get("descripcion"), ""),
+                    unidad=safe_value(row.get("unidad"), ""),
+                    pack=safe_value(row.get("pack")),
+                    factorx=safe_value(row.get("factorx")),
+                    cajas=safe_value(row.get("cajas")),
+                    saldo=safe_value(row.get("saldo")),
+                    stock_fisico=safe_value(row.get("stock_fisico")),
+                    observacion=safe_value(row.get("observacion"), ""),
+                    encargado=safe_value(row.get("encargado"), ""),
+                    numero_contenedor=safe_value(row.get("numero_contenedor"), ""),
+                    fecha_inv=safe_value(row.get("fecha_inv")),
+                    fecha_venc=safe_value(row.get("fecha_venc")),
+                    fecha_imp=safe_value(row.get("fecha_imp")),
+                )
+
+            messages.success(request, "✅ Archivo Excel importado correctamente.")
+
+        except Exception as e:
+            messages.error(request, f"❌ Error al importar: {e}")
+            print("Error:", e)
+
+        return redirect("productos:index")
+
+    messages.warning(request, "No se seleccionó ningún archivo.")
+    return redirect("productos:index")
+
+# eliminar
+from django.shortcuts import redirect
+from django.contrib import messages
+from .models import Producto
+
+def eliminar_todos(request):
+    if request.method == "POST":
+        Producto.objects.all().delete()
+        messages.success(request, "🗑️ Todos los productos fueron eliminados correctamente.")
+    else:
+        messages.warning(request, "Acción no permitida.")
+    return redirect("productos:index")

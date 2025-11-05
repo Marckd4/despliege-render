@@ -7,6 +7,25 @@
 <a href="{% url 'productos:exportar_excel' %}" class="btn btn-dark btn-sm">📊 Exportar a Excel</a>
 <a href="{% url 'resumen_view' %}" class="btn btn-dark btn-sm">📊 Resumen</a>
 
+<form
+  action="{% url 'productos:importar_excel' %}"
+  method="post"
+  enctype="multipart/form-data"
+  class="d-inline"
+>
+  {% csrf_token %}
+  <input type="file" name="excel_file" accept=".xlsx,.xls" required class="form-control-file mb-2">
+  <button type="submit" class="btn btn-dark btn-sm">
+    📥 Importar Excel
+  </button>
+</form>
+<form action="{% url 'productos:eliminar_todos' %}" method="post" class="d-inline" 
+      onsubmit="return confirm('⚠️ ¿Seguro que quieres borrar TODOS los productos? Esta acción no se puede deshacer.');">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-dark btn-sm">
+    🗑️ Borrar todos
+  </button>
+</form>
 
 
 {% if user.is_authenticated %}
