@@ -162,6 +162,45 @@
         padding-top: 70px;
       }
     }
+
+      <!-- /* Submenú dentro del sidebar */
+  .sidebar .collapse a {
+    color: #ced4da !important;
+    padding-left: 35px;
+    font-size: 0.9rem;
+    transition: background 0.25s ease;
+  }
+
+  .sidebar .collapse a:hover {
+    background-color: #495057;
+    color: #fff !important;
+  } -->
+
+  /* Submenú dentro del sidebar */
+.sidebar .collapse a {
+  color: #ced4da !important;
+  font-size: 0.9rem;
+  transition: background 0.25s ease;
+  border-radius: 5px;
+}
+
+.sidebar .collapse a:hover {
+  background-color: #495057;
+  color: #fff !important;
+}
+
+/* Formularios del submenú */
+.sidebar .collapse form input[type="file"] {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.sidebar .collapse button {
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+
   </style>
 </head>
 
@@ -181,7 +220,57 @@
         Bienvenido, {{ user.username }}
       </div>
       <a href="{% url 'inicio' %}"><i class="bi bi-house-door"></i> Inicio</a>
-      <a href="{% url 'productos:index' %}"><i class="bi bi-box-seam"></i> Inventario General</a>
+      <!-- <a href="{% url 'productos:index' %}"><i class="bi bi-box-seam"></i> Inventario General</a> -->
+
+      <!-- Grupo con submenú -->
+<div class="dropdown">
+  <a class="dropdown-toggle d-flex align-items-center text-decoration-none" 
+     href="#" id="inventarioDropdown" 
+     data-bs-toggle="collapse" 
+     data-bs-target="#submenuInventario" 
+     aria-expanded="false" 
+     aria-controls="submenuInventario"
+     style="color: #adb5bd; padding: 10px 18px; margin: 6px 10px; border-radius: 8px;">
+    <i class="bi bi-box-seam me-2"></i> Inventario
+  </a>
+
+  <div class="collapse ms-2" id="submenuInventario">
+    <a href="{% url 'productos:index' %}" class="btn btn-sm btn-outline-info w-80">
+      📦 Inventario General
+    </a>
+    <a href="{% url 'productos:formulario' %}" class="btn btn-sm btn-outline-info w-80">
+      ➕ Nuevo Ingreso
+    </a>
+    <a href="{% url 'productos:exportar_excel' %}" class="btn btn-sm btn-outline-info w-80">
+      📊 Exportar Excel
+    </a>
+    <a href="{% url 'resumen_view' %}" class="btn btn-sm btn-outline-info w-80">
+      📋 Resumen
+    </a>
+
+    <div class="ps-4 pe-3 pt-2">
+      <form action="{% url 'productos:importar_excel' %}" method="post" enctype="multipart/form-data" class="mb-2">
+        {% csrf_token %}
+        <input type="file" name="excel_file" accept=".xlsx,.xls" required 
+               class="form-control form-control-sm bg-dark text-light border-0 mb-2">
+        <button type="submit" class="btn btn-sm btn-outline-info w-100">
+          📥 Importar Excel
+        </button>
+      </form>
+
+      <form action="{% url 'productos:eliminar_todos' %}" method="post" 
+            onsubmit="return confirm('⚠️ ¿Seguro que quieres borrar TODOS los productos? Esta acción no se puede deshacer.');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+          🗑️ Borrar todos
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
       <a href="{% url 'historial_movimientos' %}"><i class="bi bi-activity"></i> Auditoría</a>
       <a href="{% url 'registrar_usuario' %}"><i class="bi bi-person-plus"></i> Crear Usuario</a>
       <a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
