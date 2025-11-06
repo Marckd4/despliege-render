@@ -75,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'usuarios.middleware.RegistroActividadMiddleware',
     'usuarios.middleware.LastActivityMiddleware',
+    'productos.middleware.UpdateLastActivityMiddleware',
     
 ]
 

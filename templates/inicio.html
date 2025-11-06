@@ -2,91 +2,16 @@
 {% load static %}
 
 {% block content %}
-<div class="container py-5 text-center">
-    <h2 class="mb-4 fw-bold text-primary">
-        <i class="bi bi-truck me-2"></i> Bienvenido a Logística ChileanTrading
-    </h2>
-    <p class="text-muted mb-4">Versión 1.0</p>
 
-    <!-- Contador de usuarios -->
-    <div class="alert alert-light border rounded-4 shadow-sm w-75 mx-auto mb-5">
-        <i class="bi bi-people-fill me-2 text-primary"></i>
-        <strong>Usuarios en línea:</strong> 
-        <span class="text-success fw-bold">{{ usuarios_en_linea }}</span>
-        /
-        <span class="fw-bold">{{ total_usuarios }}</span>
-    </div>
-
-    <h3 class="mb-4 text-primary">
-        <i class="bi bi-person-lines-fill me-2"></i>
-        Estado de usuarios (últimos {{ online_threshold_minutes }} minutos)
-    </h3>
-
-    {% if usuarios %}
-        <div class="row g-4 justify-content-center">
-            {% for u in usuarios %}
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card shadow-sm border-0 rounded-4 h-100 hover-shadow transition">
-                    <div class="card-body text-center">
-                        <!-- Avatar con indicador -->
-                        <div class="position-relative d-inline-block mb-3">
-                            <div class="{% if u.en_linea %}bg-primary{% else %}bg-secondary{% endif %} text-white rounded-circle d-flex justify-content-center align-items-center"
-                                 style="width:70px; height:70px; font-size:1.4rem;">
-                                {{ u.username|slice:":2"|upper }}
-                            </div>
-                            <span class="status-dot {% if u.en_linea %}bg-success{% else %}bg-secondary{% endif %}" 
-                                  title="{% if u.en_linea %}En línea{% else %}Fuera de línea{% endif %}">
-                            </span>
-                        </div>
-
-                        <!-- Nombre y estado -->
-                        <h5 class="card-title mb-1">{{ u.username }}</h5>
-                        <p class="text-muted small mb-2">
-                            Último acceso: 
-                            {% if u.last_login %}
-                                {{ u.last_login|date:"d M Y H:i" }}
-                            {% else %}
-                                <em>Sin registro</em>
-                            {% endif %}
-                        </p>
-
-                        {% if u.en_linea %}
-                            <span class="badge bg-success px-3 py-1">En línea</span>
-                        {% else %}
-                            <span class="badge bg-secondary px-3 py-1">Fuera de línea</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+ <li>
+    {{ user.username }} —
+    {% if user.last_login|timesince < "5 minutes" %}
+      🟢 En línea
     {% else %}
-        <div class="text-center mt-5">
-            <i class="bi bi-emoji-frown display-3 text-muted"></i>
-            <p class="mt-3 fs-5 text-muted">No hay usuarios registrados.</p>
-        </div>
+      🔴 Desconectado
     {% endif %}
-</div>
+  </li>
 
-<style>
-.hover-shadow {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.hover-shadow:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 1rem 2rem rgba(0,0,0,0.16);
-}
-.position-relative { position: relative; display: inline-block; }
-.status-dot {
-  position: absolute;
-  bottom: 0;
-  right: -2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
-}
-.card { min-height: 190px; }
+
 </style>
 {% endblock %}
