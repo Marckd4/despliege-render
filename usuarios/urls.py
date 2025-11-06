@@ -9,4 +9,5 @@ urlpatterns = [
     path('historial/', views.historial_movimientos, name='historial_movimientos'),
     path('en-linea/', usuarios_en_linea, name='usuarios_en_linea'),
     path('registrar/', views.registrar_usuario, name='registrar_usuario'),
+    
 ]

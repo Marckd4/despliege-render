@@ -163,42 +163,39 @@
       }
     }
 
-      <!-- /* Submenú dentro del sidebar */
-  .sidebar .collapse a {
-    color: #ced4da !important;
-    padding-left: 35px;
-    font-size: 0.9rem;
-    transition: background 0.25s ease;
-  }
+   
+ 
 
-  .sidebar .collapse a:hover {
-    background-color: #495057;
-    color: #fff !important;
-  } -->
 
-  /* Submenú dentro del sidebar */
-.sidebar .collapse a {
-  color: #ced4da !important;
-  font-size: 0.9rem;
-  transition: background 0.25s ease;
-  border-radius: 5px;
+/* Botones del submenú */
+.submenu-btn {
+  border-color: #0dcaf0 !important;
+  color: #0dcaf0 !important;
+  background-color: #212529 !important;
+  border-width: 1.5px;
+  font-weight: 500;
+  transition: all 0.25s ease;
 }
 
-.sidebar .collapse a:hover {
-  background-color: #495057;
+.submenu-btn:hover {
+  background-color: #0dcaf0 !important;
   color: #fff !important;
+  transform: translateX(3px);
+  box-shadow: 0 3px 8px rgba(13, 202, 240, 0.3);
 }
 
-/* Formularios del submenú */
-.sidebar .collapse form input[type="file"] {
-  font-size: 0.8rem;
-  color: #ccc;
+/* Botón rojo especial */
+.submenu-btn.btn-outline-danger {
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
 }
 
-.sidebar .collapse button {
-  font-size: 0.85rem;
-  border-radius: 6px;
+.submenu-btn.btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
 }
+
 
 
   </style>
@@ -222,52 +219,60 @@
       <a href="{% url 'inicio' %}"><i class="bi bi-house-door"></i> Inicio</a>
       <!-- <a href="{% url 'productos:index' %}"><i class="bi bi-box-seam"></i> Inventario General</a> -->
 
-      <!-- Grupo con submenú -->
-<div class="dropdown">
-  <a class="dropdown-toggle d-flex align-items-center text-decoration-none" 
-     href="#" id="inventarioDropdown" 
-     data-bs-toggle="collapse" 
-     data-bs-target="#submenuInventario" 
-     aria-expanded="false" 
-     aria-controls="submenuInventario"
-     style="color: #adb5bd; padding: 10px 18px; margin: 6px 10px; border-radius: 8px;">
-    <i class="bi bi-box-seam me-2"></i> Inventario
-  </a>
+            <!-- Grupo con submenú -->
+      <div class="dropdown">
+        <a class="dropdown-toggle d-flex align-items-center text-decoration-none" 
+          href="#" id="inventarioDropdown" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#submenuInventario" 
+          aria-expanded="false" 
+          aria-controls="submenuInventario"
+          style="color: #adb5bd; padding: 10px 18px; margin: 6px 10px; border-radius: 8px;">
+          <i class="bi bi-box-seam me-2"></i> Inventario
+        </a>
 
-  <div class="collapse ms-2" id="submenuInventario">
-    <a href="{% url 'productos:index' %}" class="btn btn-sm btn-outline-info w-80">
-      📦 Inventario General
-    </a>
-    <a href="{% url 'productos:formulario' %}" class="btn btn-sm btn-outline-info w-80">
-      ➕ Nuevo Ingreso
-    </a>
-    <a href="{% url 'productos:exportar_excel' %}" class="btn btn-sm btn-outline-info w-80">
-      📊 Exportar Excel
-    </a>
-    <a href="{% url 'resumen_view' %}" class="btn btn-sm btn-outline-info w-80">
-      📋 Resumen
-    </a>
+        <div class="collapse ms-2" id="submenuInventario">
+          <div class="d-flex flex-column gap-2 ps-3 pe-3 pt-2">
 
-    <div class="ps-4 pe-3 pt-2">
-      <form action="{% url 'productos:importar_excel' %}" method="post" enctype="multipart/form-data" class="mb-2">
-        {% csrf_token %}
-        <input type="file" name="excel_file" accept=".xlsx,.xls" required 
-               class="form-control form-control-sm bg-dark text-light border-0 mb-2">
-        <button type="submit" class="btn btn-sm btn-outline-info w-100">
-          📥 Importar Excel
-        </button>
-      </form>
+            <a href="{% url 'productos:index' %}" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-info shadow-sm submenu-btn">
+              <i class="bi bi-archive me-2"></i> Inventario General
+            </a>
 
-      <form action="{% url 'productos:eliminar_todos' %}" method="post" 
-            onsubmit="return confirm('⚠️ ¿Seguro que quieres borrar TODOS los productos? Esta acción no se puede deshacer.');">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-          🗑️ Borrar todos
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
+            <a href="{% url 'productos:formulario' %}" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-info shadow-sm submenu-btn">
+              <i class="bi bi-plus-circle me-2"></i> Nuevo Ingreso
+            </a>
+
+            <a href="{% url 'productos:exportar_excel' %}" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-info shadow-sm submenu-btn">
+              <i class="bi bi-file-earmark-excel me-2"></i> Exportar Excel
+            </a>
+
+            <a href="{% url 'resumen_view' %}" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-info shadow-sm submenu-btn">
+              <i class="bi bi-clipboard-data me-2"></i> Resumen
+            </a>
+
+            <form action="{% url 'productos:importar_excel' %}" method="post" enctype="multipart/form-data" class="mt-2">
+              {% csrf_token %}
+              <input type="file" name="excel_file" accept=".xlsx,.xls" required 
+                    class="form-control form-control-sm bg-dark text-light border-0 mb-2">
+              <button type="submit" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-info shadow-sm submenu-btn">
+                <i class="bi bi-file-arrow-up me-2"></i> Importar Excel
+              </button>
+            </form>
+
+            <form action="{% url 'productos:eliminar_todos' %}" method="post"
+                  onsubmit="return confirm('⚠️ ¿Seguro que quieres borrar TODOS los productos? Esta acción no se puede deshacer.');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm w-100 text-start d-flex align-items-center btn-outline-danger shadow-sm submenu-btn">
+                <i class="bi bi-trash3 me-2"></i> Borrar todos
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+
+
 
 
 
