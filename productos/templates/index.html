@@ -45,28 +45,6 @@
 </div>
 
 
-<!-- 🔹 PAGINACIÓN -->
-<nav aria-label="Paginación">
-  <ul class="pagination justify-content-center mt-3">
-    {% if productos.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ productos.previous_page_number }}">Anterior</a>
-      </li>
-    {% endif %}
-
-    <li class="page-item disabled">
-      <span class="page-link">
-        Página {{ productos.number }} de {{ productos.paginator.num_pages }}
-      </span>
-    </li>
-
-    {% if productos.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ productos.next_page_number }}">Siguiente</a>
-      </li>
-    {% endif %}
-  </ul>
-</nav>
 
 
 <div class="table-scroll">
@@ -140,6 +118,8 @@
         
     
     </table>
+
+    
     
     
 </div>
@@ -170,9 +150,31 @@
         });
         </script>
 
-        
+            
+    <!-- 🔹 PAGINACIÓN -->
+    <nav aria-label="Paginación">
+      <ul class="pagination justify-content-center mt-3">
+        {% if productos.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ productos.previous_page_number }}">Anterior</a>
+          </li>
+        {% endif %}
 
-        
+        <li class="page-item disabled">
+          <span class="page-link">
+            Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+          </span>
+        </li>
+
+        {% if productos.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ productos.next_page_number }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+            
 
 {% endblock %}
 
