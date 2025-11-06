@@ -8,18 +8,34 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 # productos/
-@login_required
-def index(request):
-    productos = Producto.objects.all()
+# @login_required
+# def index(request):
+#     productos = Producto.objects.all()
     
-    return render(
+#     return render(
         
-        request, 
-        'index.html',
-        context={'productos': productos }
-    )
-    
-    
+#         request, 
+#         'index.html',
+#         context={'productos': productos }
+#     )
+
+
+
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Producto
+
+def index(request):
+    productos_list = Producto.objects.all().order_by('id')
+    paginator = Paginator(productos_list, 100)
+    page_number = request.GET.get('page')
+    productos = paginator.get_page(page_number)
+
+    # 👇 CAMBIA ESTA LÍNEA
+    return render(request, 'index.html', {'productos': productos})
+
+
+
 def detalle(request, producto_id):
     try:
         producto = Producto.objects.get(id=producto_id)
@@ -347,3 +363,6 @@ def eliminar_todos(request):
     else:
         messages.warning(request, "Acción no permitida.")
     return redirect("productos:index")
+
+
+

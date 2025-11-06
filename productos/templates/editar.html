@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Producto</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
 </head>
 <body>
     <div class="container mt-5">
@@ -16,7 +18,7 @@
                         <h1 class="h4 mb-0">Editar Producto: {{ producto.nombre }}</h1>
                     </div>
                     <div class="card-body">
-                        <!-- Mostrar mensajes de Django (por ejemplo, errores del formulario) -->
+                        <!-- Mostrar mensajes de Django -->
                         {% if messages %}
                             <div class="alert alert-dismissible fade show" role="alert">
                                 {% for message in messages %}
@@ -25,10 +27,11 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         {% endif %}
-                        <form method="post">
+
+                        <form method="post" id="editar-producto-form">
                             {% csrf_token %}
                             <div class="mb-3">
-                                {{ form.as_p }} <!-- Renderiza los campos del formulario -->
+                                {{ form.as_p }}
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Guardar</button>
@@ -40,7 +43,25 @@
             </div>
         </div>
     </div>
-    <!-- Bootstrap 5 JS (para componentes interactivos como alertas) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Evita envío automático al presionar Enter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('editar-producto-form');
+            if (!form) return;
+
+            // Evita que Enter envíe el formulario desde inputs normales
+            form.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
 </body>
 </html>
