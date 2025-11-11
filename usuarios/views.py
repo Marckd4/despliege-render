@@ -1,11 +1,14 @@
-from django.shortcuts import render
 
-# Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm
 from django.contrib import messages
+
+
+# -----------------------------
+# REGISTRO DE USUARIOS
+# -----------------------------
 
 def registro(request):
     if request.method == 'POST':
@@ -17,6 +20,10 @@ def registro(request):
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registro.html', {'form': form})
+
+# -----------------------------
+# INICIO Y CIERRE DE SESIÓN
+# -----------------------------
 
 def iniciar_sesion(request):
     if request.method == 'POST':
@@ -34,6 +41,10 @@ def iniciar_sesion(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('login')
+
+# -----------------------------
+# HISTORIAL DE MOVIMIENTOS
+# -----------------------------
 
 #03
 from django.shortcuts import render
@@ -63,6 +74,20 @@ def historial_movimientos(request):
     usuario_id = request.GET.get('usuario')
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    # Normalizar valores
+    if not fecha_inicio or fecha_inicio == "None":
+        fecha_inicio = None
+    if not fecha_fin or fecha_fin == "None":
+        fecha_fin = None
+
+    if fecha_inicio:
+        movimientos = movimientos.filter(fecha__gte=fecha_inicio)
+    if fecha_fin:
+        movimientos = movimientos.filter(fecha__lte=fecha_fin)
+
 
     # Solo filtrar si usuario_id es un número válido
     if usuario_id and usuario_id.isdigit():
@@ -74,7 +99,7 @@ def historial_movimientos(request):
         movimientos = movimientos.filter(fecha__lte=fecha_fin)
 
     # Paginación
-    paginator = Paginator(movimientos, 1000)
+    paginator = Paginator(movimientos, 500)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -118,6 +143,8 @@ def registrar_usuario(request):
     else:
         form = UserCreationForm()
     return render(request, 'usuarios/registro.html', {'form': form})
+
+
 
 
 

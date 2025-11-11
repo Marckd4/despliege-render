@@ -10,4 +10,5 @@ urlpatterns = [
     path('en-linea/', usuarios_en_linea, name='usuarios_en_linea'),
     path('registrar/', views.registrar_usuario, name='registrar_usuario'),
     
+    
 ]
