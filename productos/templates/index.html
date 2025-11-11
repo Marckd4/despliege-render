@@ -45,12 +45,19 @@
     <label for="globalSearch" class="form-label"></label>
     <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
 </div>
+
+
 <div class="input-group mb-3">
   <input type="search" id="globalSearch" class="form-control" placeholder="Buscar o escanear código de barras...">
   <button class="btn btn-dark" id="scanBarcode">
     📷 Escanear
   </button>
 </div>
+
+<!-- Elemento de video para la cámara -->
+<video id="video" style="width:100%; max-width:400px; border:1px solid #ccc; display:none;" autoplay></video>
+
+
 
 
 
@@ -157,6 +164,50 @@
         });
         </script>
 
+        <script src="https://unpkg.com/@zxing/browser@latest"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const video = document.getElementById('video');
+  const searchInput = document.getElementById('globalSearch');
+  const scanBtn = document.getElementById('scanBarcode');
+
+  scanBtn.addEventListener('click', async () => {
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+
+    try {
+      video.style.display = 'block';
+
+      // 📸 Usamos el nuevo método para listar cámaras
+      const devices = await codeReader.listVideoInputDevices();
+      if (devices.length === 0) {
+        alert('No se detectaron cámaras en el dispositivo.');
+        return;
+      }
+
+      // Intentar usar la cámara trasera si está disponible
+      const rearCamera = devices.find(d => /back|rear|environment/i.test(d.label));
+      const selectedDeviceId = rearCamera ? rearCamera.deviceId : devices[0].deviceId;
+
+      // Escanear una sola vez
+      const result = await codeReader.decodeOnceFromVideoDevice(selectedDeviceId, video);
+
+      // Mostrar resultado en el input
+      searchInput.value = result.text;
+      searchInput.dispatchEvent(new Event('input'));
+
+      // Detener cámara
+      codeReader.reset();
+      video.style.display = 'none';
+    } catch (err) {
+      console.error(err);
+      alert('No se pudo leer el código: ' + err.message);
+      video.style.display = 'none';
+    }
+  });
+});
+</script>
+
+
             
     <!-- 🔹 PAGINACIÓN -->
     <nav aria-label="Paginación">
@@ -180,20 +231,6 @@
         {% endif %}
       </ul>
     </nav>
-
-        <script src="https://unpkg.com/@zxing/library@latest"></script>
-    <script>
-    document.getElementById('scanBarcode').addEventListener('click', async () => {
-      const codeReader = new ZXing.BrowserBarcodeReader();
-      try {
-        const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
-        document.getElementById('globalSearch').value = result.text;
-        document.getElementById('globalSearch').dispatchEvent(new Event('input'));
-      } catch (err) {
-        alert('No se pudo leer el código: ' + err);
-      }
-    });
-    </script>
 
             
 
