@@ -45,7 +45,12 @@
     <label for="globalSearch" class="form-label"></label>
     <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
 </div>
-
+<div class="input-group mb-3">
+  <input type="search" id="globalSearch" class="form-control" placeholder="Buscar o escanear código de barras...">
+  <button class="btn btn-dark" id="scanBarcode">
+    📷 Escanear
+  </button>
+</div>
 
 
 
@@ -175,6 +180,20 @@
         {% endif %}
       </ul>
     </nav>
+
+        <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script>
+    document.getElementById('scanBarcode').addEventListener('click', async () => {
+      const codeReader = new ZXing.BrowserBarcodeReader();
+      try {
+        const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
+        document.getElementById('globalSearch').value = result.text;
+        document.getElementById('globalSearch').dispatchEvent(new Event('input'));
+      } catch (err) {
+        alert('No se pudo leer el código: ' + err);
+      }
+    });
+    </script>
 
             
 
