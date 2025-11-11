@@ -45,18 +45,15 @@
     <label for="globalSearch" class="form-label"></label>
     <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
 </div>
-
-
-<div class="input-group mb-3">
-  <input type="search" id="globalSearch" class="form-control" placeholder="Buscar o escanear código de barras...">
-  <button class="btn btn-dark" id="scanBarcode">
-    📷 Escanear
-  </button>
+<div class="mb-3">
+  <button id="startScan" class="btn btn-dark btn-sm">📷 Escanear código</button>
+  <button id="stopScan" class="btn btn-danger btn-sm" disabled>⛔ Detener</button>
+  <small id="scanStatus" class="text-muted ms-2">Cámara inactiva</small>
 </div>
 
-<!-- Elemento de video para la cámara -->
-<video id="video" style="width:100%; max-width:400px; border:1px solid #ccc; display:none;" autoplay></video>
-
+<div id="scannerContainer" class="mb-3" style="display:none;">
+  <video id="video" autoplay playsinline style="width:100%;max-width:400px;border-radius:8px;background:#000;"></video>
+</div>
 
 
 
@@ -163,47 +160,77 @@
         });
         });
         </script>
+        <!-- Librería ZXing -->
+<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 
-        <script src="https://unpkg.com/@zxing/browser@latest"></script>
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const startBtn = document.getElementById('startScan');
+  const stopBtn = document.getElementById('stopScan');
+  const status = document.getElementById('scanStatus');
   const video = document.getElementById('video');
+  const container = document.getElementById('scannerContainer');
   const searchInput = document.getElementById('globalSearch');
-  const scanBtn = document.getElementById('scanBarcode');
+  const codeReader = new ZXing.BrowserMultiFormatReader();
 
-  scanBtn.addEventListener('click', async () => {
-    const codeReader = new ZXing.BrowserMultiFormatReader();
+  let currentStream = null;
+  let decoding = false;
 
+  function logStatus(text) {
+    status.textContent = text;
+  }
+
+  async function startScanner() {
     try {
-      video.style.display = 'block';
+      logStatus('Activando cámara...');
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      container.style.display = 'block';
 
-      // 📸 Usamos el nuevo método para listar cámaras
-      const devices = await codeReader.listVideoInputDevices();
-      if (devices.length === 0) {
-        alert('No se detectaron cámaras en el dispositivo.');
-        return;
-      }
+      // Preferir cámara trasera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+      });
+      video.srcObject = stream;
+      currentStream = stream;
 
-      // Intentar usar la cámara trasera si está disponible
-      const rearCamera = devices.find(d => /back|rear|environment/i.test(d.label));
-      const selectedDeviceId = rearCamera ? rearCamera.deviceId : devices[0].deviceId;
-
-      // Escanear una sola vez
-      const result = await codeReader.decodeOnceFromVideoDevice(selectedDeviceId, video);
-
-      // Mostrar resultado en el input
-      searchInput.value = result.text;
-      searchInput.dispatchEvent(new Event('input'));
-
-      // Detener cámara
-      codeReader.reset();
-      video.style.display = 'none';
+      codeReader.decodeFromVideoElementContinuously(video, (result, err) => {
+        if (result && !decoding) {
+          decoding = true;
+          const text = result.getText();
+          logStatus('Código detectado: ' + text);
+          searchInput.value = text;
+          searchInput.dispatchEvent(new Event('input'));
+          // si quieres detener automáticamente:
+          // stopScanner();
+          decoding = false;
+        }
+      });
+      logStatus('Cámara activa (usa la trasera si está disponible)');
     } catch (err) {
       console.error(err);
-      alert('No se pudo leer el código: ' + err.message);
-      video.style.display = 'none';
+      logStatus('Error al acceder a la cámara');
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
     }
-  });
+  }
+
+  function stopScanner() {
+    codeReader.reset();
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+      currentStream = null;
+    }
+    container.style.display = 'none';
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    logStatus('Cámara detenida');
+  }
+
+  startBtn.addEventListener('click', startScanner);
+  stopBtn.addEventListener('click', stopScanner);
+  window.addEventListener('pagehide', stopScanner);
 });
 </script>
 
