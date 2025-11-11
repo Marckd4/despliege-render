@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'usuarios',
     'resumen',
     'widget_tweaks',
+   
     
 
   

@@ -17,5 +17,4 @@ urlpatterns = [
     path("importar_excel/", views.importar_excel, name="importar_excel"),
     path("eliminar_todos/", views.eliminar_todos, name="eliminar_todos"),
     
-    
 ]
