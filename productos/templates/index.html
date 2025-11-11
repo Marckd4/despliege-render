@@ -44,15 +44,23 @@
  <div class="mb-3">
     <label for="globalSearch" class="form-label"></label>
     <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
+
+
+<div id="scannerContainer" class="mb-3" style="display:none;">
+  <video id="video" autoplay playsinline style="width:100%;max-width:400px;border-radius:8px;background:#000;"></video>
 </div>
 <div class="mb-3">
   <button id="startScan" class="btn btn-dark btn-sm">📷 Escanear código</button>
   <button id="stopScan" class="btn btn-danger btn-sm" disabled>⛔ Detener</button>
+  <button id="capturePhoto" class="btn btn-secondary btn-sm" disabled>📸 Capturar imagen</button>
   <small id="scanStatus" class="text-muted ms-2">Cámara inactiva</small>
 </div>
-
-<div id="scannerContainer" class="mb-3" style="display:none;">
-  <video id="video" autoplay playsinline style="width:100%;max-width:400px;border-radius:8px;background:#000;"></video>
+<div id="photoPreview" class="text-center mt-3" style="display:none;">
+  <h6>📸 Imagen capturada:</h6>
+  <img id="capturedImage" src="" alt="Captura" style="max-width:300px; border-radius:8px; border:2px solid #555;">
+  <div class="mt-2">
+    <a id="downloadImage" class="btn btn-success btn-sm" href="#" download="captura.jpg">💾 Descargar</a>
+  </div>
 </div>
 
 
@@ -162,78 +170,19 @@
         </script>
       <!-- Librería ZXing -->
 <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
-<style>
-  /* Contenedor del escáner */
-  #scannerContainer {
-    position: relative;
-    width: 100%;
-    max-width: 320px;       /* 📏 ancho máximo más compacto */
-    aspect-ratio: 4 / 3;    /* mantiene proporción cuadrada */
-    margin: 0 auto;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #000;
-  }
-
-  /* Video */
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;      /* ajusta sin deformar */
-    border-radius: 8px;
-    background: #000;
-    /*transform: scaleX(-1);  /* opcional: espejo para parecer escáner */
-  }
-
-  /* Cuadro de enfoque (visor) */
-  #focusBox {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60%;
-    height: 40%;
-    transform: translate(-50%, -50%);
-    border: 3px solid rgba(0, 255, 0, 0.8);
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-    animation: pulse 2s infinite;
-    pointer-events: none;
-  }
-
-  @keyframes pulse {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  }
-
-  /* Modal */
-  #scanModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #scanModal .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 90%;
-    text-align: center;
-  }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   const startBtn = document.getElementById('startScan');
   const stopBtn = document.getElementById('stopScan');
+  const captureBtn = document.getElementById('capturePhoto');
   const status = document.getElementById('scanStatus');
   const video = document.getElementById('video');
   const container = document.getElementById('scannerContainer');
   const searchInput = document.getElementById('globalSearch');
+  const photoPreview = document.getElementById('photoPreview');
+  const capturedImage = document.getElementById('capturedImage');
+  const downloadLink = document.getElementById('downloadImage');
   const codeReader = new ZXing.BrowserMultiFormatReader();
 
   let currentStream = null;
@@ -271,6 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       logStatus('Activando cámara...');
       startBtn.disabled = true;
       stopBtn.disabled = false;
+      captureBtn.disabled = false;
       container.style.display = 'block';
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -279,6 +229,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       video.srcObject = stream;
       currentStream = stream;
+
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+
+      // Si es cámara frontal, reflejar la imagen
+      if (settings.facingMode === "user") {
+        video.style.transform = "scaleX(-1)";
+      } else {
+        video.style.transform = "none";
+      }
 
       codeReader.decodeFromVideoElementContinuously(video, (result, err) => {
         if (result && !decoding) {
@@ -294,6 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       logStatus('Error al acceder a la cámara');
       startBtn.disabled = false;
       stopBtn.disabled = true;
+      captureBtn.disabled = true;
     }
   }
 
@@ -306,6 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.style.display = 'none';
     startBtn.disabled = false;
     stopBtn.disabled = true;
+    captureBtn.disabled = true;
     logStatus('Cámara detenida');
   }
 
@@ -317,6 +279,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   function hideModal() {
     modal.style.display = 'none';
   }
+
+  // Capturar foto del frame actual
+  captureBtn.addEventListener('click', () => {
+    if (!video.srcObject) return;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/jpeg');
+
+    capturedImage.src = imageData;
+    downloadLink.href = imageData;
+    photoPreview.style.display = 'block';
+    logStatus('📸 Imagen capturada');
+  });
 
   acceptBtn.addEventListener('click', () => {
     const code = scannedCodeEl.textContent.trim();
