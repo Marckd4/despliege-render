@@ -27,7 +27,7 @@ from .models import Producto
 
 def index(request):
     productos_list = Producto.objects.all().order_by('id')
-    paginator = Paginator(productos_list, 8000)
+    paginator = Paginator(productos_list, 50)
     page_number = request.GET.get('page')
     productos = paginator.get_page(page_number)
 
