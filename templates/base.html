@@ -278,6 +278,12 @@
 
       <a href="{% url 'historial_movimientos' %}"><i class="bi bi-activity"></i> Auditoría</a>
       <a href="{% url 'registrar_usuario' %}"><i class="bi bi-person-plus"></i> Crear Usuario</a>
+      {% if user.is_authenticated and user.is_staff %}
+        
+       <a href="{% url 'admin:index' %}" target="_blank" rel="noopener noreferrer"><i class="bi bi-activity"></i> Admin</a>
+
+      {% endif %}
+
       <a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
     {% else %}
       <a href="{% url 'login' %}" class="text-success"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
