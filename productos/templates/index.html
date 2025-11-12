@@ -3,48 +3,16 @@
 {% block content %}
 
 <br>
-<!-- <a href="{% url 'productos:formulario'%}" class="btn btn-dark btn-sm"> Nuevo Ingreso</a> -->
-<!-- <a href="{% url 'productos:exportar_excel' %}" class="btn btn-dark btn-sm">📊 Exportar a Excel</a> -->
-<!-- <a href="{% url 'resumen_view' %}" class="btn btn-dark btn-sm">📊 Resumen</a> -->
-
-<!-- <form
-  action="{% url 'productos:importar_excel' %}"
-  method="post"
-  enctype="multipart/form-data"
-  class="d-inline"
->
-  {% csrf_token %}
-  <input type="file" name="excel_file" accept=".xlsx,.xls" required class="form-control-file mb-2">
-  <button type="submit" class="btn btn-dark btn-sm">
-    📥 Importar Excel
-  </button>
-</form>
-<form action="{% url 'productos:eliminar_todos' %}" method="post" class="d-inline" 
-      onsubmit="return confirm('⚠️ ¿Seguro que quieres borrar TODOS los productos? Esta acción no se puede deshacer.');">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-dark btn-sm">
-    🗑️ Borrar todos
-  </button>
-</form> -->
-
-
-
 
 {% if user.is_authenticated %}
-  <!-- <form method="post" action="{% url 'logout' %}" class="d-inline">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger btn-sm ">
-      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </button>
-  </form> -->
+  <!-- botón de logout (comentado como antes) -->
 {% endif %}
 
-
-
- <div class="mb-3">
-    <label for="globalSearch" class="form-label"></label>
-    <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
+<div class="mb-3">
+  <label for="globalSearch" class="form-label"></label>
+  <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
 </div>
+
 <div class="mb-3">
   <button id="startScan" class="btn btn-dark btn-sm">📷 Escanear código</button>
   <button id="stopScan" class="btn btn-danger btn-sm" disabled>⛔ Detener</button>
@@ -52,329 +20,304 @@
 </div>
 
 <div id="scannerContainer" class="mb-3" style="display:none;">
-  <video id="video" autoplay playsinline style="width:100%;max-width:400px;border-radius:8px;background:#000;"></video>
+  <video id="video" autoplay playsinline></video>
 </div>
-
-
-
 
 <div class="table-scroll">
-   
-    <table class="table table-striped table-hover mb-0">
-        <thead class="table-dark">
-            <tr>
-                <th>Categoria</th>
-                <th>Empresa</th>
-                <th>Ubicacion</th>
-                <th>Cod_Ean</th>
-                <th>Cod_Dun</th>
-                <th>Cod_Sistema</th>
-                <th>Descripcion</th>
-                <th>Unidad</th>
-                <th>Pack</th>
-                <th>FactorX</th>
-                <th>Cajas</th>
-                <th>Saldo</th>
-                <th>Stock_Fisico</th>
-                <th>Observacion</th>
-                <th>Fecha_Venc</th>
-                <th>Fecha_Imp</th>
-                <th>Contenedor</th>
-                <th>Fecha_Inv</th>
-                <th>Encargado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-    
-        <tboby>
-        {% for producto in productos%}
-        
-        <tr>
-            
-            <td>{{ producto.categoria }}</td>
-            <td>{{ producto.empresa }}</td>
-            <td>{{ producto.ubicacion }}</td>
-            <td>{{ producto.cod_ean }}</td>
-            <td>
-                <a href="{% url 'productos:detalle' producto.id%}">
-                    
-                    {{ producto.cod_dun }}
-                </a>
-            </td>
-            <td>{{ producto.cod_sistema }}</td>
-            <td>{{ producto.descripcion }}</td>
-            <td>{{ producto.unidad }}</td>
-            <td>{{ producto.pack }}</td>
-            <td>{{ producto.factorx }}</td>
-            <td>{{ producto.cajas }}</td>
-            <td>{{ producto.saldo }}</td>
-            <td>{{ producto.stock_fisico }}</td>
-            <td>{{ producto.observacion }}</td>
-            <td>{{ producto.fecha_venc }}</td>
-            <td>{{ producto.fecha_imp }}</td>
-            <td>{{ producto.contenedor }}</td>
-            <td>{{ producto.fecha_inv }}</td>
-            <td>{{ producto.encargado }}</td>
-            
-            <td>
-                <a href="{% url 'productos:editar_producto' producto.id%}" class="btn btn-warning btn-sm">✏️ Editar</a>
-                <a href="{% url 'productos:eliminar_producto' producto.id %}" class="btn btn-danger btn-sm"
-                onclick="return confirm('¿Seguro que deseas eliminar este registro?');">🗑️ Eliminar</a>
-
-                
-            </td>
-        </tr>
-        {% endfor %}
-        </tboby>
-        
-    
-    </table>
-
-    
-    
-    
+  <table class="table table-striped table-hover mb-0">
+    <thead class="table-dark">
+      <tr>
+        <th>Categoria</th>
+        <th>Empresa</th>
+        <th>Ubicacion</th>
+        <th>Cod_Ean</th>
+        <th>Cod_Dun</th>
+        <th>Cod_Sistema</th>
+        <th>Descripcion</th>
+        <th>Unidad</th>
+        <th>Pack</th>
+        <th>FactorX</th>
+        <th>Cajas</th>
+        <th>Saldo</th>
+        <th>Stock_Fisico</th>
+        <th>Observacion</th>
+        <th>Fecha_Venc</th>
+        <th>Fecha_Imp</th>
+        <th>Contenedor</th>
+        <th>Fecha_Inv</th>
+        <th>Encargado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for producto in productos %}
+      <tr>
+        <td>{{ producto.categoria }}</td>
+        <td>{{ producto.empresa }}</td>
+        <td>{{ producto.ubicacion }}</td>
+        <td>{{ producto.cod_ean }}</td>
+        <td>
+          <a href="{% url 'productos:detalle' producto.id %}">
+            {{ producto.cod_dun }}
+          </a>
+        </td>
+        <td>{{ producto.cod_sistema }}</td>
+        <td>{{ producto.descripcion }}</td>
+        <td>{{ producto.unidad }}</td>
+        <td>{{ producto.pack }}</td>
+        <td>{{ producto.factorx }}</td>
+        <td>{{ producto.cajas }}</td>
+        <td>{{ producto.saldo }}</td>
+        <td>{{ producto.stock_fisico }}</td>
+        <td>{{ producto.observacion }}</td>
+        <td>{{ producto.fecha_venc }}</td>
+        <td>{{ producto.fecha_imp }}</td>
+        <td>{{ producto.contenedor }}</td>
+        <td>{{ producto.fecha_inv }}</td>
+        <td>{{ producto.encargado }}</td>
+        <td>
+          <a href="{% url 'productos:editar_producto' producto.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+          <a href="{% url 'productos:eliminar_producto' producto.id %}" class="btn btn-danger btn-sm"
+             onclick="return confirm('¿Seguro que deseas eliminar este registro?');">🗑️ Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-        <script>
-        document.addEventListener('DOMContentLoaded', function(){
-        const input = document.getElementById('globalSearch');
-        if(!input) return;
-        const table = document.querySelector('table');
-        const tbody = table ? table.tBodies[0] : null;
-        input.addEventListener('input', function(e){
-            const q = e.target.value.trim().toLowerCase();
-            if(!tbody){
-            return;
-            }
-            Array.from(tbody.rows).forEach(row=>{
-            const text = row.textContent.toLowerCase();
-            const match = text.indexOf(q) !== -1;
-            row.style.display = match ? '' : 'none';
-            });
-        });
-        // Atajo: presionar '/' para enfocar la búsqueda (opcional)
-        document.addEventListener('keydown', function(e){
-            if(e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
-            e.preventDefault();
-            input.focus();
-            }
-        });
-        });
-        </script>
-          <!-- Librería ZXing -->
-    <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
-    <style>
-      /* Contenedor del escáner */
-      #scannerContainer {
-        position: relative;
-        width: 100%;
-        max-width: 320px;       /* 📏 ancho máximo más compacto */
-        aspect-ratio: 4 / 3;    /* mantiene proporción cuadrada */
-        margin: 0 auto;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #000;
-      }
 
-      /* Video */
-      #video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;      /* ajusta sin deformar */
-        border-radius: 8px;
-        background: #000;
-        /*transform: scaleX(-1);  /* opcional: espejo para parecer escáner */
-      }
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const input = document.getElementById('globalSearch');
+  const table = document.querySelector('table');
+  const tbody = table ? table.tBodies[0] : null;
 
-      /* Cuadro de enfoque (visor) */
-      #focusBox {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 60%;
-        height: 40%;
-        transform: translate(-50%, -50%);
-        border: 3px solid rgba(0, 255, 0, 0.8);
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-        animation: pulse 2s infinite;
-        pointer-events: none;
-      }
-
-      @keyframes pulse {
-        0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
-        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      }
-
-      /* Modal */
-      #scanModal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #scanModal .modal-content {
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 90%;
-        text-align: center;
-      }
-      .table-scroll {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      max-height: 75vh;
-    }
-
-    </style>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const startBtn = document.getElementById('startScan');
-      const stopBtn = document.getElementById('stopScan');
-      const status = document.getElementById('scanStatus');
-      const video = document.getElementById('video');
-      const container = document.getElementById('scannerContainer');
-      const searchInput = document.getElementById('globalSearch');
-      const codeReader = new ZXing.BrowserMultiFormatReader();
-
-      let currentStream = null;
-      let decoding = false;
-
-      // Crear cuadro de enfoque
-      const focusBox = document.createElement('div');
-      focusBox.id = 'focusBox';
-      container.appendChild(focusBox);
-
-      // Crear modal de confirmación
-      const modal = document.createElement('div');
-      modal.id = 'scanModal';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <h5>📦 Código detectado</h5>
-          <p id="scannedCode" class="fw-bold text-primary"></p>
-          <div class="mt-3">
-            <button id="acceptCode" class="btn btn-success btn-sm">Aceptar</button>
-            <button id="continueScan" class="btn btn-secondary btn-sm">Seguir escaneando</button>
-          </div>
-        </div>`;
-      document.body.appendChild(modal);
-
-      const scannedCodeEl = modal.querySelector('#scannedCode');
-      const acceptBtn = modal.querySelector('#acceptCode');
-      const continueBtn = modal.querySelector('#continueScan');
-
-      function logStatus(text) {
-        status.textContent = text;
-      }
-
-      async function startScanner() {
-        try {
-          logStatus('Activando cámara...');
-          startBtn.disabled = true;
-          stopBtn.disabled = false;
-          container.style.display = 'block';
-
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { ideal: "environment" } },
-            audio: false
-          });
-          video.srcObject = stream;
-          currentStream = stream;
-
-          codeReader.decodeFromVideoElementContinuously(video, (result, err) => {
-            if (result && !decoding) {
-              decoding = true;
-              const text = result.getText();
-              showModal(text);
-            }
-          });
-
-          logStatus('Cámara activa (usa la trasera si está disponible)');
-        } catch (err) {
-          console.error(err);
-          logStatus('Error al acceder a la cámara');
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
-        }
-      }
-
-      function stopScanner() {
-        codeReader.reset();
-        if (currentStream) {
-          currentStream.getTracks().forEach(track => track.stop());
-          currentStream = null;
-        }
-        container.style.display = 'none';
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-        logStatus('Cámara detenida');
-      }
-
-      function showModal(code) {
-        scannedCodeEl.textContent = code;
-        modal.style.display = 'flex';
-      }
-
-      function hideModal() {
-        modal.style.display = 'none';
-      }
-
-      acceptBtn.addEventListener('click', () => {
-        const code = scannedCodeEl.textContent.trim();
-        searchInput.value = code;
-        searchInput.dispatchEvent(new Event('input'));
-        hideModal();
-        stopScanner();
-        searchInput.focus(); // 👈 mejora UX
-        logStatus('Código aceptado: ' + code);
-      });
-
-      continueBtn.addEventListener('click', () => {
-        hideModal();
-        decoding = false;
-        logStatus('Escaneo reanudado...');
-      });
-
-      startBtn.addEventListener('click', startScanner);
-      stopBtn.addEventListener('click', stopScanner);
-      window.addEventListener('pagehide', stopScanner);
+  input.addEventListener('input', function(e){
+    const q = e.target.value.trim().toLowerCase();
+    Array.from(tbody.rows).forEach(row=>{
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? '' : 'none';
     });
-    </script>
+  });
 
+  document.addEventListener('keydown', function(e){
+    if(e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+      e.preventDefault();
+      input.focus();
+    }
+  });
+});
+</script>
 
-            
-    <!-- 🔹 PAGINACIÓN -->
-    <nav aria-label="Paginación">
-      <ul class="pagination justify-content-center mt-3">
-        {% if productos.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ productos.previous_page_number }}">Anterior</a>
-          </li>
-        {% endif %}
+<!-- ZXing -->
+<script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 
-        <li class="page-item disabled">
-          <span class="page-link">
-            Página {{ productos.number }} de {{ productos.paginator.num_pages }}
-          </span>
-        </li>
+<style>
+#scannerContainer {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
 
-        {% if productos.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ productos.next_page_number }}">Siguiente</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
+#video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+}
 
-            
+#focusBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(0, 255, 0, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+  animation: pulse 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+#scanModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+#scanModal .modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 75vh;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const startBtn = document.getElementById('startScan');
+  const stopBtn = document.getElementById('stopScan');
+  const status = document.getElementById('scanStatus');
+  const video = document.getElementById('video');
+  const container = document.getElementById('scannerContainer');
+  const searchInput = document.getElementById('globalSearch');
+  const codeReader = new ZXing.BrowserMultiFormatReader();
+
+  let currentStream = null;
+  let decoding = false;
+
+  // Cuadro de enfoque
+  const focusBox = document.createElement('div');
+  focusBox.id = 'focusBox';
+  container.appendChild(focusBox);
+
+  // Modal
+  const modal = document.createElement('div');
+  modal.id = 'scanModal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h5>📦 Código detectado</h5>
+      <p id="scannedCode" class="fw-bold text-primary"></p>
+      <div class="mt-3">
+        <button id="acceptCode" class="btn btn-success btn-sm">Aceptar</button>
+        <button id="continueScan" class="btn btn-secondary btn-sm">Seguir escaneando</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const scannedCodeEl = modal.querySelector('#scannedCode');
+  const acceptBtn = modal.querySelector('#acceptCode');
+  const continueBtn = modal.querySelector('#continueScan');
+
+  function logStatus(text) {
+    status.textContent = text;
+  }
+
+  async function startScanner() {
+    try {
+      logStatus('Activando cámara...');
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      container.style.display = 'block';
+
+      const devices = await codeReader.listVideoInputDevices();
+      const constraints = {
+        video: {
+          deviceId: devices.length > 1 ? devices[1].deviceId : undefined,
+          facingMode: { ideal: "environment" },
+          focusMode: "continuous",
+          exposureMode: "continuous"
+        },
+        audio: false
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = stream;
+      currentStream = stream;
+
+      codeReader.decodeFromVideoElementContinuously(video, (result, err) => {
+        if (result && !decoding) {
+          decoding = true;
+          const text = result.getText();
+          showModal(text);
+          setTimeout(() => decoding = false, 1500); // 🔹 retardo para evitar lecturas repetidas
+        }
+      });
+
+      logStatus('Cámara activa (usa la trasera si está disponible)');
+    } catch (err) {
+      console.error(err);
+      logStatus('Error al acceder a la cámara');
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+  }
+
+  function stopScanner() {
+    codeReader.reset();
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop());
+      currentStream = null;
+    }
+    container.style.display = 'none';
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    logStatus('Cámara detenida');
+  }
+
+  function showModal(code) {
+    scannedCodeEl.textContent = code;
+    modal.style.display = 'flex';
+  }
+
+  function hideModal() {
+    modal.style.display = 'none';
+  }
+
+  acceptBtn.addEventListener('click', () => {
+    const code = scannedCodeEl.textContent.trim();
+    searchInput.value = code;
+    searchInput.dispatchEvent(new Event('input'));
+    hideModal();
+    stopScanner();
+    searchInput.focus();
+    logStatus('Código aceptado: ' + code);
+  });
+
+  continueBtn.addEventListener('click', () => {
+    hideModal();
+    decoding = false;
+    logStatus('Escaneo reanudado...');
+  });
+
+  startBtn.addEventListener('click', startScanner);
+  stopBtn.addEventListener('click', stopScanner);
+  window.addEventListener('pagehide', stopScanner);
+});
+</script>
+
+<nav aria-label="Paginación">
+  <ul class="pagination justify-content-center mt-3">
+    {% if productos.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ productos.previous_page_number }}">Anterior</a>
+      </li>
+    {% endif %}
+    <li class="page-item disabled">
+      <span class="page-link">
+        Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+      </span>
+    </li>
+    {% if productos.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ productos.next_page_number }}">Siguiente</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
 
 {% endblock %}
-
-
-
 
