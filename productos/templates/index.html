@@ -20,8 +20,12 @@
     value="{{ query }}"
     placeholder="Buscar producto..."
     class="form-control me-2"
+    id="busqueda"
   >
-  <button type="submit" class="btn btn-primary">Buscar</button>
+  <button type="submit" class="btn btn-primary me-2">Buscar</button>
+  <button type="button" class="btn btn-danger secondary" onclick="document.getElementById('busqueda').value=''; this.form.submit();">
+    Limpiar
+  </button>
 </form>
 
 

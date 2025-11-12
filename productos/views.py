@@ -79,6 +79,7 @@ def index(request):
             Q(cod_ean__icontains=query) |
             Q(cod_sistema__icontains=query) |
             Q(descripcion__icontains=query) |
+            Q(ubicacion__icontains=query) |
             Q(empresa__icontains=query)
         )
 
