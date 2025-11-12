@@ -12,7 +12,7 @@ class MovimientoUsuario(models.Model):
     ]
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    accion = models.CharField(max_length=20, choices=ACCIONES)
+    accion = models.CharField(max_length=50, choices=ACCIONES)
     descripcion = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
