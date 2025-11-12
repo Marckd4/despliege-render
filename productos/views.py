@@ -367,3 +367,153 @@ def eliminar_todos(request):
 
 
 
+#10
+
+
+from usuarios.utils import registrar_movimiento
+
+def formulario_producto(request):
+    mensaje = ''
+    form_data = None
+
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+
+            cod_dun = request.POST.get('cod_dun', '')
+            cod_ean = request.POST.get('cod_ean', '')
+            cod_sistema = request.POST.get('cod_sistema', '')
+            descripcion = request.POST.get('descripcion', '')
+
+            defaults = {
+                'cod_ean': cod_ean,
+                'cod_sistema': cod_sistema,
+                'descripcion': descripcion,
+                'unidad': cd.get('unidad') or '',
+                'pack': cd.get('pack') or 0,
+                'factorx': cd.get('factorx') or 0.0,
+                'cajas': cd.get('cajas') or 0,
+                'saldo': cd.get('saldo') or 0,
+                'stock_fisico': cd.get('stock_fisico') or 0,
+                'observacion': cd.get('observacion') or '',
+                'fecha_inv': cd.get('fecha_inv'),
+                'encargado': cd.get('encargado') or '',
+                'fecha_venc': cd.get('fecha_venc'),
+                'fecha_imp': cd.get('fecha_imp'),
+                'numero_contenedor': cd.get('numero_contenedor') or '',
+                'Data_base': cd.get('Data_base') or '',
+            }
+
+            producto, creado = Producto.objects.update_or_create(
+                cod_dun=cod_dun,
+                defaults=defaults
+            )
+
+            # Registrar movimiento
+            ip = request.META.get('REMOTE_ADDR')
+            if creado:
+                registrar_movimiento(
+                    usuario=request.user,
+                    accion='CREAR',
+                    descripcion=f"Creó el producto: {producto.descripcion} (DUN {producto.cod_dun})",
+                    ip=ip
+                )
+            else:
+                registrar_movimiento(
+                    usuario=request.user,
+                    accion='MODIFICAR',
+                    descripcion=f"Modificó el producto: {producto.descripcion} (DUN {producto.cod_dun})",
+                    ip=ip
+                )
+
+            mensaje = f"✅ Producto {producto.cod_dun} {'creado' if creado else 'actualizado'} correctamente."
+            form = ProductoForm(instance=producto)
+            form_data = producto
+    else:
+        form = ProductoForm()
+
+    return render(request, 'productos/formulario.html', {
+        'form': form,
+        'mensaje': mensaje,
+        'form_data': form_data
+    })
+
+
+from usuarios.utils import registrar_movimiento
+
+def editar_producto(request, id):
+    producto = Producto.objects.get(id=id)
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            registrar_movimiento(
+                usuario=request.user,
+                accion='MODIFICAR',
+                descripcion=f"Editó el producto: {producto.descripcion} (ID {producto.id})",
+                ip=request.META.get('REMOTE_ADDR')
+            )
+            return redirect('productos:index')
+    else:
+        form = ProductoForm(instance=producto)
+    return render(request, 'editar.html', {'form': form})
+
+
+from usuarios.utils import registrar_movimiento
+
+def eliminar_producto(request, id):
+    producto = Producto.objects.get(id=id)
+    if request.method == 'POST':
+        registrar_movimiento(
+            usuario=request.user,
+            accion='ELIMINAR',
+            descripcion=f"Eliminó el producto: {producto.descripcion} (ID {producto.id})",
+            ip=request.META.get('REMOTE_ADDR')
+        )
+        producto.delete()
+        return redirect('productos:index')
+    return render(request, 'eliminar.html', {'producto': producto})
+
+
+from usuarios.utils import registrar_movimiento
+
+def eliminar_todos(request):
+    if request.method == "POST":
+        registrar_movimiento(
+            usuario=request.user,
+            accion='ELIMINAR_TODOS',
+            descripcion="Eliminó todos los productos del inventario.",
+            ip=request.META.get('REMOTE_ADDR')
+        )
+        Producto.objects.all().delete()
+        messages.success(request, "🗑️ Todos los productos fueron eliminados correctamente.")
+    else:
+        messages.warning(request, "Acción no permitida.")
+    return redirect("productos:index")
+
+from usuarios.utils import registrar_movimiento
+
+def importar_excel(request):
+    if request.method == "POST" and request.FILES.get("excel_file"):
+        excel_file = request.FILES["excel_file"]
+        try:
+            # ... tu lógica de importación ...
+            messages.success(request, "✅ Archivo Excel importado correctamente.")
+
+            registrar_movimiento(
+                usuario=request.user,
+                accion='IMPORTAR',
+                descripcion=f"Importó archivo Excel: {excel_file.name}",
+                ip=request.META.get('REMOTE_ADDR')
+            )
+        except Exception as e:
+            messages.error(request, f"❌ Error al importar: {e}")
+
+        return redirect("productos:index")
+    messages.warning(request, "No se seleccionó ningún archivo.")
+    return redirect("productos:index")
+
+
+# usuraios - moviminetos 
+

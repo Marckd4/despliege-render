@@ -1,16 +1,21 @@
+# usuarios/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
 class MovimientoUsuario(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    accion = models.CharField(max_length=255)
-    fecha = models.DateTimeField(auto_now_add=True)
-    ip = models.GenericIPAddressField(null=True, blank=True)
-    metodo = models.CharField(max_length=10, blank=True, null=True)
-    user_agent = models.CharField(max_length=255, blank=True, null=True)
+    ACCIONES = [
+        ('CREAR', 'Creación'),
+        ('MODIFICAR', 'Modificación'),
+        ('ELIMINAR', 'Eliminación'),
+        ('IMPORTAR', 'Importación masiva'),
+        ('ELIMINAR_TODOS', 'Eliminación total'),
+    ]
 
-    class Meta:
-        ordering = ['-fecha']
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    accion = models.CharField(max_length=20, choices=ACCIONES)
+    descripcion = models.TextField(blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    ip = models.GenericIPAddressField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.usuario.username} - {self.accion} - {self.fecha}"
+        return f"{self.usuario.username} - {self.accion} ({self.fecha:%d/%m/%Y %H:%M})"

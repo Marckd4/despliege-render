@@ -145,10 +145,54 @@ def registrar_usuario(request):
     return render(request, 'usuarios/registro.html', {'form': form})
 
 
+# movimientos
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from openpyxl import Workbook
+from .models import MovimientoUsuario
+
+@login_required
+def historial(request):
+    movimientos = MovimientoUsuario.objects.all().order_by('-fecha')
+    return render(request, 'usuarios/historial.html', {'movimientos': movimientos})
 
 
+# 🧹 ELIMINAR TODO EL HISTORIAL
+@login_required
+def eliminar_todo_historial(request):
+    if request.method == "POST":
+        MovimientoUsuario.objects.all().delete()
+        return redirect('historial')
+    return render(request, 'usuarios/confirmar_eliminar_todo.html')
 
 
+# 📊 EXPORTAR A EXCEL
+@login_required
+def exportar_excel(request):
+    movimientos = MovimientoUsuario.objects.all().order_by('-fecha')
 
+    # Crear libro Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Historial de Movimientos"
 
+    # Encabezados
+    ws.append(["Usuario", "Acción", "Descripción", "Fecha", "IP"])
 
+    # Datos
+    for mov in movimientos:
+        ws.append([
+            mov.usuario.username,
+            mov.get_accion_display(),
+            mov.descripcion,
+            mov.fecha.strftime("%d/%m/%Y %H:%M"),
+            mov.ip or "-"
+        ])
+
+    # Preparar respuesta HTTP
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="historial_movimientos.xlsx"'
+    wb.save(response)
+    return response
