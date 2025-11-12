@@ -7,11 +7,23 @@
 {% if user.is_authenticated %}
   <!-- botón de logout (comentado como antes) -->
 {% endif %}
-
+<!-- 
 <div class="mb-3">
   <label for="globalSearch" class="form-label"></label>
   <input type="search" id="globalSearch" class="form-control" placeholder="Buscar en la tabla...">
-</div>
+</div> -->
+
+<form method="get" class="mb-3 d-flex">
+  <input
+    type="text"
+    name="q"
+    value="{{ query }}"
+    placeholder="Buscar producto..."
+    class="form-control me-2"
+  >
+  <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
 
 <div class="mb-3">
   <button id="startScan" class="btn btn-dark btn-sm">📷 Escanear código</button>
@@ -299,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 </script>
 
-<nav aria-label="Paginación">
+<!-- <nav aria-label="Paginación">
   <ul class="pagination justify-content-center mt-3">
     {% if productos.has_previous %}
       <li class="page-item">
@@ -317,7 +329,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       </li>
     {% endif %}
   </ul>
+</nav> -->
+
+<nav aria-label="Paginación">
+  <ul class="pagination justify-content-center mt-3">
+    {% if productos.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ productos.previous_page_number }}&q={{ query }}">Anterior</a>
+      </li>
+    {% endif %}
+    <li class="page-item disabled">
+      <span class="page-link">
+        Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+      </span>
+    </li>
+    {% if productos.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ productos.next_page_number }}&q={{ query }}">Siguiente</a>
+      </li>
+    {% endif %}
+  </ul>
 </nav>
+
 
 {% endblock %}
 

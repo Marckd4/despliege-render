@@ -21,30 +21,81 @@ from django.contrib.auth.decorators import login_required
 
 
 
-from django.core.paginator import Paginator
+# from django.core.paginator import Paginator
+# from django.shortcuts import render
+# from .models import Producto
+
+# def index(request):
+#     productos_list = Producto.objects.all().order_by('id')
+#     paginator = Paginator(productos_list, 5000)
+#     page_number = request.GET.get('page')
+#     productos = paginator.get_page(page_number)
+
+#     # 👇 CAMBIA ESTA LÍNEA
+#     return render(request, 'index.html', {'productos': productos})
+
+
+
+# def detalle(request, producto_id):
+#     try:
+#         producto = Producto.objects.get(id=producto_id)
+#         return render(
+#             request, 
+#             'detalle.html', 
+#             context={'producto': producto})  
+#     except Producto.DoesNotExist:
+#         raise Http404()
+
+
+# def formulario(request):
+#     if request.method == 'POST':
+#         form = ProductoForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect('/productos')
+        
+#     else:
+#             form = ProductoForm()
+    
+#     return render(request,'producto_form.html',{'form': form})
+
+# paginator 
+
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import Producto
+from .forms import ProductoForm
+
 
 def index(request):
+    query = request.GET.get('q', '').strip()
     productos_list = Producto.objects.all().order_by('id')
-    paginator = Paginator(productos_list, 5000)
+
+    if query:
+        productos_list = productos_list.filter(
+            Q(cod_dun__icontains=query) |
+            Q(cod_ean__icontains=query) |
+            Q(cod_sistema__icontains=query) |
+            Q(descripcion__icontains=query) |
+            Q(empresa__icontains=query)
+        )
+
+    paginator = Paginator(productos_list, 50)
     page_number = request.GET.get('page')
     productos = paginator.get_page(page_number)
 
-    # 👇 CAMBIA ESTA LÍNEA
-    return render(request, 'index.html', {'productos': productos})
+    return render(request, 'index.html', {'productos': productos, 'query': query})
 
 
-
+# ✅ Asegúrate de que esta función existe
 def detalle(request, producto_id):
     try:
         producto = Producto.objects.get(id=producto_id)
-        return render(
-            request, 
-            'detalle.html', 
-            context={'producto': producto})  
+        return render(request, 'detalle.html', {'producto': producto})
     except Producto.DoesNotExist:
-        raise Http404()
+        raise Http404("Producto no encontrado")
 
 
 def formulario(request):
@@ -53,12 +104,10 @@ def formulario(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/productos')
-        
     else:
-            form = ProductoForm()
-    
-    return render(request,'producto_form.html',{'form': form})
+        form = ProductoForm()
 
+    return render(request, 'producto_form.html', {'form': form})
 
 
 import openpyxl
