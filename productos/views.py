@@ -329,6 +329,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from .models import Producto, Categoria
 
+
+
 def importar_excel(request):
     if request.method == "POST" and request.FILES.get("excel_file"):
         excel_file = request.FILES["excel_file"]
@@ -543,27 +545,4 @@ def eliminar_todos(request):
     return redirect("productos:index")
 
 from usuarios.utils import registrar_movimiento
-
-def importar_excel(request):
-    if request.method == "POST" and request.FILES.get("excel_file"):
-        excel_file = request.FILES["excel_file"]
-        try:
-            # ... tu lógica de importación ...
-            messages.success(request, "✅ Archivo Excel importado correctamente.")
-
-            registrar_movimiento(
-                usuario=request.user,
-                accion='IMPORTAR',
-                descripcion=f"Importó archivo Excel: {excel_file.name}",
-                ip=request.META.get('REMOTE_ADDR')
-            )
-        except Exception as e:
-            messages.error(request, f"❌ Error al importar: {e}")
-
-        return redirect("productos:index")
-    messages.warning(request, "No se seleccionó ningún archivo.")
-    return redirect("productos:index")
-
-
-# usuraios - moviminetos 
 
