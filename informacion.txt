@@ -76,3 +76,13 @@ python manage.py createsuperuser
 @Jose_Jaramillo
 @Yesenia_Gonzalez
 @Eduardo_Fernandez
+
+
+
+
+pip install -r requirements.txt
+
+
+git add requirements.txt
+git commit -m "Actualizar requirements.txt"
+git push
