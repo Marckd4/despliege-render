@@ -5,59 +5,7 @@ from productos.forms import ProductoForm
 from .models import Producto
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 
-# productos/
-# @login_required
-# def index(request):
-#     productos = Producto.objects.all()
-    
-#     return render(
-        
-#         request, 
-#         'index.html',
-#         context={'productos': productos }
-#     )
-
-
-
-# from django.core.paginator import Paginator
-# from django.shortcuts import render
-# from .models import Producto
-
-# def index(request):
-#     productos_list = Producto.objects.all().order_by('id')
-#     paginator = Paginator(productos_list, 5000)
-#     page_number = request.GET.get('page')
-#     productos = paginator.get_page(page_number)
-
-#     # 👇 CAMBIA ESTA LÍNEA
-#     return render(request, 'index.html', {'productos': productos})
-
-
-
-# def detalle(request, producto_id):
-#     try:
-#         producto = Producto.objects.get(id=producto_id)
-#         return render(
-#             request, 
-#             'detalle.html', 
-#             context={'producto': producto})  
-#     except Producto.DoesNotExist:
-#         raise Http404()
-
-
-# def formulario(request):
-#     if request.method == 'POST':
-#         form = ProductoForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect('/productos')
-        
-#     else:
-#             form = ProductoForm()
-    
-#     return render(request,'producto_form.html',{'form': form})
 
 # paginator 
 
@@ -109,6 +57,9 @@ def formulario(request):
         form = ProductoForm()
 
     return render(request, 'producto_form.html', {'form': form})
+
+
+# exportar excel
 
 
 import openpyxl
@@ -176,6 +127,9 @@ def exportar_excel(request):
     wb.save(response)
     return response
 
+
+ # editar etc...
+
 from django.shortcuts import render, redirect
 from .models import Producto
 from .forms import ProductoForm
@@ -202,7 +156,6 @@ def eliminar_producto(request, id):
 
 
 # cod_dun
- 
 
 
 from django.shortcuts import render
@@ -291,8 +244,6 @@ def buscar_producto(request):
 
 # registro de usuarios 
 
-
-# views.py
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -544,5 +495,5 @@ def eliminar_todos(request):
         messages.warning(request, "Acción no permitida.")
     return redirect("productos:index")
 
-from usuarios.utils import registrar_movimiento
+
 

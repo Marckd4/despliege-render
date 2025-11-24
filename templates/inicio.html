@@ -3,10 +3,13 @@
 
 {% block content %}
 
+  <a href="{% url 'registrar_usuario' %}"><i class="bi bi-person-plus"></i> Crear Usuario</a>
+
  <li>
     {{ user.username }} —
     {% if user.last_login|timesince < "5 minutes" %}
       🟢 En línea
+       
     {% else %}
       🔴 Desconectado
     {% endif %}
